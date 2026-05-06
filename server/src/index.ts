@@ -19,6 +19,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Trust proxy (required for Vercel/reverse proxy)
+app.set('trust proxy', 1);
+
 // ==================== MIDDLEWARE ====================
 
 // Security headers
