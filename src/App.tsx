@@ -28,8 +28,8 @@ export default function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
 
   const [profile, setProfile] = useState<UserProfile>({
-    name: 'Aura',
-    avatar: 'Aura',
+    name: 'Summbix',
+    avatar: 'Summbix',
     bio: 'Master of Discipline',
     email: '',
     joinDate: new Date().toISOString()
@@ -77,7 +77,7 @@ export default function App() {
           setIsGuest(false);
           setProfile({
             name: user.name,
-            avatar: user.avatar || 'Aura',
+            avatar: user.avatar || 'Summbix',
             bio: user.bio || 'Master of Discipline',
             email: user.email,
             joinDate: user.createdAt,
@@ -111,7 +111,7 @@ export default function App() {
         const me = await profileApi.get();
         setProfile({
           name: me.name,
-          avatar: me.avatar || 'Aura',
+          avatar: me.avatar || 'Summbix',
           bio: me.bio || 'Master of Discipline',
           email: me.email,
           joinDate: me.createdAt,
@@ -129,7 +129,7 @@ export default function App() {
     } catch {}
     setIsAuthenticated(false);
     setIsGuest(false);
-    setProfile({ name: '', avatar: 'Aura', bio: 'Master of Discipline', joinDate: '' });
+    setProfile({ name: '', avatar: 'Summbix', bio: 'Master of Discipline', joinDate: '' });
     setGoals([]);
     setTasks([]);
     setHabits([]);
@@ -146,22 +146,22 @@ export default function App() {
   // For guest mode, keep localStorage sync
   useEffect(() => {
     if (isGuest) {
-      localStorage.setItem('aura-goals', JSON.stringify(goals));
+      localStorage.setItem('summbix-goals', JSON.stringify(goals));
     }
   }, [goals, isGuest]);
   useEffect(() => {
     if (isGuest) {
-      localStorage.setItem('aura-tasks', JSON.stringify(tasks));
+      localStorage.setItem('summbix-tasks', JSON.stringify(tasks));
     }
   }, [tasks, isGuest]);
   useEffect(() => {
     if (isGuest) {
-      localStorage.setItem('aura-habits', JSON.stringify(habits));
+      localStorage.setItem('summbix-habits', JSON.stringify(habits));
     }
   }, [habits, isGuest]);
   useEffect(() => {
     if (isGuest) {
-      localStorage.setItem('aura-sessions', JSON.stringify(sessions));
+      localStorage.setItem('summbix-sessions', JSON.stringify(sessions));
     }
   }, [sessions, isGuest]);
 
@@ -192,7 +192,7 @@ export default function App() {
   const handleResetAllData = async () => {
     if (confirm('APAKAH ANDA YAKIN INGIN MENGHAPUS SELURUH DATA? (History, Goals, Task, dan Lagu Upload akan hilang permanen)')) {
       localStorage.clear();
-      indexedDB.deleteDatabase('aura-music');
+      indexedDB.deleteDatabase('summbix-music');
       
       if (!isGuest) {
         try { await profileApi.deleteAccount(); } catch {}
@@ -204,8 +204,8 @@ export default function App() {
       setSessions([]);
       setNotifications([]);
       setProfile({
-        name: 'Aura',
-        avatar: 'Aura',
+        name: 'Summbix',
+        avatar: 'Summbix',
         bio: 'Master of Discipline',
         joinDate: new Date().toISOString()
       });

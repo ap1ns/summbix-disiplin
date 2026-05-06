@@ -73,7 +73,7 @@ export default function Login({ onLogin }: LoginProps) {
     try {
       if (isLogin) {
         await authApi.login(email, password);
-        onLogin('Aura User');
+        onLogin('Summbix User');
       } else {
         await authApi.register(email, password, name);
         // Registration success: Move to OTP verification
@@ -138,7 +138,7 @@ export default function Login({ onLogin }: LoginProps) {
         <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(#e38569 1px, transparent 1px), linear-gradient(90deg, #e38569 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
         
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-[10%] -left-10 text-[18vw] font-black text-brand-primary/[0.03] leading-none select-none italic">AURA</div>
+          <div className="absolute top-[10%] -left-10 text-[18vw] font-black text-brand-primary/[0.03] leading-none select-none italic">SUMMBIX</div>
           <div className="absolute bottom-[5%] -right-10 text-[15vw] font-black text-brand-primary/[0.03] leading-none select-none">DISCIPLINE</div>
         </div>
 
@@ -213,7 +213,7 @@ export default function Login({ onLogin }: LoginProps) {
                           className="group relative px-10 py-4 bg-white text-brand-primary font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all overflow-hidden"
                         >
                            <span className="relative z-10 flex items-center gap-2 font-black">
-                             {isLogin ? "Join Aura" : "Sign In instead"}
+                             {isLogin ? "Join Summbix" : "Sign In instead"}
                              {isLogin ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
                            </span>
                         </button>
@@ -239,11 +239,11 @@ export default function Login({ onLogin }: LoginProps) {
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-brand-text-light/50 uppercase tracking-widest ml-1">Full Name</label>
-                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Aura Agent" className="w-full bg-brand-bg/30 border border-brand-primary/10 rounded-2xl py-4 px-5 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all" required={!isLogin} />
+                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Summbix Agent" className="w-full bg-brand-bg/30 border border-brand-primary/10 rounded-2xl py-4 px-5 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all" required={!isLogin} />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-brand-text-light/50 uppercase tracking-widest ml-1">Email</label>
-                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="agent@aura.com" className="w-full bg-brand-bg/30 border border-brand-primary/10 rounded-2xl py-4 px-5 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all" required />
+                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="agent@summbix.com" className="w-full bg-brand-bg/30 border border-brand-primary/10 rounded-2xl py-4 px-5 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all" required />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-brand-text-light/50 uppercase tracking-widest ml-1">Password</label>
@@ -291,7 +291,7 @@ export default function Login({ onLogin }: LoginProps) {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-brand-text-light/50 uppercase tracking-widest ml-1">Email</label>
-                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="agent@aura.com" className="w-full bg-brand-bg/30 border border-brand-primary/10 rounded-2xl py-4 px-5 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all" required />
+                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="agent@summbix.com" className="w-full bg-brand-bg/30 border border-brand-primary/10 rounded-2xl py-4 px-5 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all" required />
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between px-1">
@@ -456,7 +456,7 @@ export default function Login({ onLogin }: LoginProps) {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="agent@dafin.com"
+                                placeholder="agent@summbix.com"
                                 className="w-full bg-white border border-brand-primary/10 rounded-2xl py-6 pl-14 pr-6 text-brand-text placeholder:text-brand-text-light/30 focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary/30 transition-all text-sm font-bold shadow-sm"
                               />
                            </div>
@@ -483,7 +483,7 @@ export default function Login({ onLogin }: LoginProps) {
                    <div className="w-1 h-1 bg-brand-text rounded-full" />
                    <div className="flex items-center gap-2">
                      <Zap className="w-4 h-4 text-brand-text" />
-                     <span className="text-[10px] font-black uppercase tracking-widest">Aura Core v2.0</span>
+                     <span className="text-[10px] font-black uppercase tracking-widest">Summbix Core v2.0</span>
                    </div>
                 </div>
              </div>

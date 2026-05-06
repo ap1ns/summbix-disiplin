@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
-import { prisma } from '../index.js';
+import { prisma } from '../lib/prisma.js';
 import { authenticate, generateTokens, AuthRequest } from '../middleware/auth.js';
 import { sendOtpEmail } from '../utils/email.js';
 
@@ -104,7 +104,7 @@ router.post('/login', async (req, res: Response) => {
     
     // Treat unverified users exactly like non-existent users
     if (!user || !user.isVerified) {
-      res.status(401).json({ error: 'Identity not found. Please join the Aura first.' });
+      res.status(401).json({ error: 'Identity not found. Please join Summbix first.' });
       return;
     }
 

@@ -57,7 +57,7 @@ export async function sendOtpEmail(to: string, otp: string): Promise<boolean> {
     <body>
       <div class="container">
         <div class="header">
-          <h1>⚡ AURA DISCIPLINE</h1>
+          <h1>⚡ SUMMBIX DISCIPLINE</h1>
           <p>Identity Verification Required</p>
         </div>
         <div class="body">
@@ -70,7 +70,7 @@ export async function sendOtpEmail(to: string, otp: string): Promise<boolean> {
           <p class="warning">⏱ This code expires in <strong>15 minutes</strong>. Do not share it with anyone.</p>
         </div>
         <div class="footer">
-          Aura Discipline &copy; 2026 &bull; Stay Focused. Stay Disciplined.
+          Summbix Discipline &copy; 2026 &bull; Stay Focused. Stay Disciplined.
         </div>
       </div>
     </body>
@@ -79,11 +79,11 @@ export async function sendOtpEmail(to: string, otp: string): Promise<boolean> {
 
   try {
     const info = await transporter.sendMail({
-      from: `"Aura Discipline ⚡" <${process.env.SMTP_USER}>`,
+      from: `"Summbix Discipline ⚡" <${process.env.SMTP_USER}>`,
       to,
-      subject: '⚡ Your Aura Verification Code',
+      subject: '⚡ Your Summbix Verification Code',
       html,
-      text: `Your Aura Discipline verification code is: ${otp}. It expires in 15 minutes.`,
+      text: `Your Summbix Discipline verification code is: ${otp}. It expires in 15 minutes.`,
     });
     console.log(`✅ Email sent to ${to} | Message ID: ${info.messageId}`);
     return true;

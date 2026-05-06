@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" width="100%" alt="Aura Discipline Banner" />
+  <img src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" width="100%" alt="Summbix Discipline Banner" />
 
-  # ✨ Aura Discipline
+  # ✨ Summbix Discipline
   **Master Your Time. Elevate Your Potential.**
 
   [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -11,19 +11,19 @@
 
   ---
 
-  Aura Discipline is a premium, high-tech productivity dashboard designed for high-achievers. It combines aesthetic excellence with rigorous time-tracking, goal management, and behavioral analytics.
+  Summbix Discipline is a premium, high-tech productivity dashboard designed for high-achievers. It combines aesthetic excellence with rigorous time-tracking, goal management, and behavioral analytics.
 </div>
 
-## 🚀 Core Features
+## Core Features
 
-- **🎯 Goal Management:** Set long-term objectives and track progress through daily habits and tasks.
-- **⏱️ Neural Focus Sync:** Deep-work timer with integrated music and progress tracking.
-- **📊 Advanced Analytics:** Visualize your productivity trends, integrity scores, and focus distribution.
-- **🗓️ Dynamic Scheduling:** A time-aware task list that syncs with your daily rhythms.
-- **🛡️ Integrity Scoring:** A unique metric that tracks how well you stick to your commitments.
-- **🔐 Secure Auth:** OTP-based email verification and persistent session management.
+- **Goal Management:** Set long-term objectives and track progress through daily habits and tasks.
+- **Neural Focus Sync:** Deep-work timer with integrated music and progress tracking.
+- **Advanced Analytics:** Visualize your productivity trends, integrity scores, and focus distribution.
+- **Dynamic Scheduling:** A time-aware task list that syncs with your daily rhythms.
+- **Integrity Scoring:** A unique metric that tracks how well you stick to your commitments.
+- **Secure Auth:** OTP-based email verification and persistent session management.
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js** (Latest LTS recommended)
@@ -33,8 +33,8 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/aura-discipline.git
-   cd aura-discipline
+   git clone https://github.com/your-username/summbix-discipline.git
+   cd summbix-discipline
    ```
 
 2. **Install dependencies:**
@@ -53,25 +53,13 @@
    npm run dev
    ```
 
-## 🎨 Tech Stack
+## Tech Stack
 
 - **Frontend:** React + Vite
 - **Styling:** Tailwind CSS + Custom CSS Variables
 - **Animations:** Framer Motion (Motion.React)
 - **Icons:** Lucide React
 - **State:** React Hooks + LocalStorage/Backend Sync
-
-## 📈 Roadmap
-
-- [x] OTP Authentication Flow
-- [x] Neural Sync Focus Mode
-- [x] Integrity Score Algorithm
-- [x] Dynamic Goals & Tasks
-- [ ] Mobile App Synchronization
-- [ ] Team Collaboration Spaces
-- [ ] AI-Driven Productivity Coaching
-
----
 
 <div align="center">
   Built with ❤️ for the disciplined.

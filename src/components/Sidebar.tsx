@@ -37,7 +37,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
           <div className="w-14 h-14 rounded-2xl bg-white shadow-xl flex items-center justify-center transition-transform hover:rotate-12 duration-500">
             <Zap className="w-7 h-7 text-brand-primary fill-current" />
           </div>
-          <div className="mt-3 text-[10px] font-black tracking-[0.2em] text-white/40 uppercase">Aura</div>
+          <div className="mt-3 text-[10px] font-black tracking-[0.2em] text-white/40 uppercase">Summbix</div>
         </div>
 
         {/* Menu Items */}

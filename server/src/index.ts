@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './lib/prisma.js';
 
 import authRoutes from './routes/auth.js';
 import goalRoutes from './routes/goals.js';
@@ -15,8 +15,6 @@ import notificationRoutes from './routes/notifications.js';
 import profileRoutes from './routes/profile.js';
 
 dotenv.config();
-
-export const prisma = new PrismaClient();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -30,24 +28,17 @@ app.use(helmet({
 
 // CORS - Allow frontend to communicate
 app.use(cors({
-  origin: true, // Reflect request origin (allows any domain during dev)
+  origin: true,
   credentials: true,
 }));
 
-// Rate limiting - prevent abuse
+// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // max 200 requests per window per IP
+  windowMs: 15 * 60 * 1000,
+  max: 200,
   message: { error: 'Too many requests, please try again later.' },
 });
 app.use(limiter);
-
-// Stricter rate limit for auth routes
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: { error: 'Too many login attempts, please try again later.' },
-});
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -55,7 +46,7 @@ app.use(cookieParser());
 
 // ==================== ROUTES ====================
 
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/habits', habitRoutes);
@@ -83,30 +74,12 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 
 // ==================== START SERVER ====================
 
-async function main() {
-  try {
-    await prisma.$connect();
-    console.log('✅ Database connected');
-    
-    app.listen(PORT, () => {
-      console.log(`🚀 Aura Discipline API running on http://localhost:${PORT}`);
-      console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-    });
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    process.exit(1);
-  }
+// Only listen if not on Vercel
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Summbix Discipline API running on http://localhost:${PORT}`);
+  });
 }
 
-main();
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  await prisma.$disconnect();
-  process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-  await prisma.$disconnect();
-  process.exit(0);
-});
+export default app;
+export { prisma };

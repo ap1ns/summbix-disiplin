@@ -1,6 +1,6 @@
 export const initDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('aura_audio_store', 1);
+    const request = indexedDB.open('summbix_audio_store', 1);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = (e: any) => {

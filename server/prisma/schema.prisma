@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -12,7 +13,7 @@ model User {
   email         String         @unique
   password      String
   name          String
-  avatar        String         @default("Aura")
+  avatar        String         @default("Summbix")
   bio           String         @default("Master of Discipline")
   isVerified    Boolean        @default(false)
   otpCode       String?

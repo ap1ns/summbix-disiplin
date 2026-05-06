@@ -332,7 +332,7 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
                 <h2 className="text-3xl font-black text-brand-text mb-4 uppercase italic tracking-tight">TERMINATE NODE?</h2>
                 
                 <p className="text-brand-text-light font-medium leading-relaxed mb-10">
-                  This action is <span className="text-red-500 font-black italic">IRREVERSIBLE</span>. All your strategic goals, habit patterns, and focus logs will be purged from the Aura network forever.
+                  This action is <span className="text-red-500 font-black italic">IRREVERSIBLE</span>. All your strategic goals, habit patterns, and focus logs will be purged from the Summbix network forever.
                 </p>
                 
                 <div className="grid grid-cols-2 gap-4">
@@ -351,7 +351,7 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
                   </button>
                 </div>
                 
-                <p className="mt-8 text-[9px] font-black text-brand-text-light/30 uppercase tracking-[0.3em]">Protocol: Aura-Zero-Cascade</p>
+                <p className="mt-8 text-[9px] font-black text-brand-text-light/30 uppercase tracking-[0.3em]">Protocol: Summbix-Zero-Cascade</p>
               </div>
             </motion.div>
           </div>

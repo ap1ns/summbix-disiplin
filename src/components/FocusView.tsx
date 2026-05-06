@@ -30,7 +30,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
   const [finalElapsedSeconds, setFinalElapsedSeconds] = useState(0);
 
   useEffect(() => {
-    const savedTime = localStorage.getItem('aura_focus_timeLeft');
+    const savedTime = localStorage.getItem('summbix_focus_timeLeft');
     // We only need timeLeft to know there's a session. Duration can fallback to 25 mins.
     if (savedTime && parseInt(savedTime) > 0 && parseInt(savedTime) < (25 * 60 * 10)) { // sanity check
       setShowResumePopup(true);
@@ -38,8 +38,8 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
   }, []);
 
   const handleResume = () => {
-    const savedTime = localStorage.getItem('aura_focus_timeLeft');
-    const savedDuration = localStorage.getItem('aura_focus_duration');
+    const savedTime = localStorage.getItem('summbix_focus_timeLeft');
+    const savedDuration = localStorage.getItem('summbix_focus_duration');
     if (savedTime && savedDuration) {
       setDuration(parseInt(savedDuration));
       setTimeLeft(parseInt(savedTime));
@@ -49,8 +49,8 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
   };
 
   const handleStartNew = () => {
-    localStorage.removeItem('aura_focus_timeLeft');
-    localStorage.removeItem('aura_focus_duration');
+    localStorage.removeItem('summbix_focus_timeLeft');
+    localStorage.removeItem('summbix_focus_duration');
     setDuration(25 * 60);
     setTimeLeft(25 * 60);
     setHasStarted(false);
@@ -59,7 +59,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
   // Soundscape State
   const [customSoundscapes, setCustomSoundscapes] = useState<Soundscape[]>(() => {
-    const saved = localStorage.getItem('aura_custom_soundscapes');
+    const saved = localStorage.getItem('summbix_custom_soundscapes');
     return saved ? JSON.parse(saved) : [];
   });
   const [selectedSoundscape, setSelectedSoundscape] = useState<Soundscape | null>(null);
@@ -95,10 +95,10 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     setIsActive(!isActive);
     if (!isActive) {
       setHasStarted(true);
-      localStorage.setItem('aura_focus_duration', duration.toString());
-      localStorage.setItem('aura_focus_timeLeft', timeLeft.toString());
+      localStorage.setItem('summbix_focus_duration', duration.toString());
+      localStorage.setItem('summbix_focus_timeLeft', timeLeft.toString());
       if (focusTarget) {
-        localStorage.setItem('aura_focus_target', JSON.stringify(focusTarget));
+        localStorage.setItem('summbix_focus_target', JSON.stringify(focusTarget));
       }
     }
   };
@@ -108,18 +108,18 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     setHasStarted(false);
     setTimeLeft(duration);
     setIsFinished(false);
-    localStorage.removeItem('aura_focus_timeLeft');
-    localStorage.removeItem('aura_focus_duration');
-    localStorage.removeItem('aura_focus_target');
+    localStorage.removeItem('summbix_focus_timeLeft');
+    localStorage.removeItem('summbix_focus_duration');
+    localStorage.removeItem('summbix_focus_target');
   };
 
   const handleComplete = async (elapsed?: number) => {
     setIsActive(false);
     setIsFinished(true);
     setHasStarted(false);
-    localStorage.removeItem('aura_focus_timeLeft');
-    localStorage.removeItem('aura_focus_duration');
-    localStorage.removeItem('aura_focus_target');
+    localStorage.removeItem('summbix_focus_timeLeft');
+    localStorage.removeItem('summbix_focus_duration');
+    localStorage.removeItem('summbix_focus_target');
     
     const finalDuration = elapsed !== undefined ? elapsed : duration;
     setFinalElapsedSeconds(finalDuration);
@@ -176,13 +176,13 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     setTimeLeft(secs);
     setIsActive(false);
     setHasStarted(false);
-    localStorage.setItem('aura_focus_duration', secs.toString());
-    localStorage.setItem('aura_focus_timeLeft', secs.toString());
+    localStorage.setItem('summbix_focus_duration', secs.toString());
+    localStorage.setItem('summbix_focus_timeLeft', secs.toString());
   };
 
   const saveCustomSounds = (sounds: Soundscape[]) => {
     setCustomSoundscapes(sounds);
-    localStorage.setItem('aura_custom_soundscapes', JSON.stringify(sounds));
+    localStorage.setItem('summbix_custom_soundscapes', JSON.stringify(sounds));
   };
 
 
@@ -322,7 +322,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
       timerRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           const next = prev - 1;
-          localStorage.setItem('aura_focus_timeLeft', next.toString());
+          localStorage.setItem('summbix_focus_timeLeft', next.toString());
           return next;
         });
       }, 1000);
@@ -347,7 +347,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     >
       {/* Deep Immersive Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Ambient Aura */}
+        {/* Ambient Summbix */ dustEffectEnabled && <DustEffect />}
         <motion.div 
           animate={{ 
             scale: isActive ? [1, 1.2, 1] : 1,
@@ -440,7 +440,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
             <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-brand-text">Flow Conquered.</h2>
             <p className="text-xl text-brand-text-light max-w-lg mb-12 leading-relaxed font-medium">
               You channeled <span className="text-brand-primary font-black">{(finalElapsedSeconds / 60).toFixed(1)} minutes</span> into absolute focus. 
-              The discipline shapes your aura.
+              The discipline shapes your summbix.
             </p>
             <div className="flex items-center gap-6">
               <button onClick={resetTimer} className="px-10 py-5 rounded-[2rem] bg-white border border-brand-primary/10 hover:border-brand-primary/30 text-brand-text-light hover:text-brand-primary font-black uppercase tracking-[0.2em] text-xs transition-all shadow-sm backdrop-blur-md">
@@ -728,7 +728,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                                   {s.name}
                                 </p>
                                 <p className="text-[8px] font-bold text-black/30 uppercase tracking-[0.1em] mt-0.5 truncate">
-                                  {s.album || s.artist || 'Aura Archive'}
+                                  {s.album || s.artist || 'Summbix Archive'}
                                 </p>
                               </div>
 
