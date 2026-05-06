@@ -1,20 +1,78 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+  <img src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" width="100%" alt="Aura Discipline Banner" />
+
+  # ✨ Aura Discipline
+  **Master Your Time. Elevate Your Potential.**
+
+  [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+  [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  [![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
+
+  ---
+
+  Aura Discipline is a premium, high-tech productivity dashboard designed for high-achievers. It combines aesthetic excellence with rigorous time-tracking, goal management, and behavioral analytics.
 </div>
 
-# Run and deploy your AI Studio app
+## 🚀 Core Features
 
-This contains everything you need to run your app locally.
+- **🎯 Goal Management:** Set long-term objectives and track progress through daily habits and tasks.
+- **⏱️ Neural Focus Sync:** Deep-work timer with integrated music and progress tracking.
+- **📊 Advanced Analytics:** Visualize your productivity trends, integrity scores, and focus distribution.
+- **🗓️ Dynamic Scheduling:** A time-aware task list that syncs with your daily rhythms.
+- **🛡️ Integrity Scoring:** A unique metric that tracks how well you stick to your commitments.
+- **🔐 Secure Auth:** OTP-based email verification and persistent session management.
 
-View your app in AI Studio: https://ai.studio/apps/1101a27b-7693-4bda-a282-3c675a2f98f6
+## 🛠️ Getting Started
 
-## Run Locally
+### Prerequisites
+- **Node.js** (Latest LTS recommended)
+- **NPM** or **Yarn**
 
-**Prerequisites:**  Node.js
+### Installation
 
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/aura-discipline.git
+   cd aura-discipline
+   ```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup:**
+   Create a `.env.local` file and add your Gemini API Key:
+   ```env
+   GEMINI_API_KEY=your_api_key_here
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+## 🎨 Tech Stack
+
+- **Frontend:** React + Vite
+- **Styling:** Tailwind CSS + Custom CSS Variables
+- **Animations:** Framer Motion (Motion.React)
+- **Icons:** Lucide React
+- **State:** React Hooks + LocalStorage/Backend Sync
+
+## 📈 Roadmap
+
+- [x] OTP Authentication Flow
+- [x] Neural Sync Focus Mode
+- [x] Integrity Score Algorithm
+- [x] Dynamic Goals & Tasks
+- [ ] Mobile App Synchronization
+- [ ] Team Collaboration Spaces
+- [ ] AI-Driven Productivity Coaching
+
+---
+
+<div align="center">
+  Built with ❤️ for the disciplined.
+</div>
