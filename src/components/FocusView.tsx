@@ -338,12 +338,40 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
   const progress = ((duration - timeLeft) / duration) * 100;
 
+  const dustEffectEnabled = true;
+  const DustEffect = () => (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ 
+            x: Math.random() * 100 + "%", 
+            y: Math.random() * 100 + "%",
+            opacity: 0 
+          }}
+          animate={{ 
+            y: [null, "-10%"],
+            opacity: [0, 0.3, 0],
+            scale: [0.5, 1, 0.5]
+          }}
+          transition={{ 
+            duration: 10 + Math.random() * 20, 
+            repeat: Infinity, 
+            ease: "linear",
+            delay: Math.random() * 10
+          }}
+          className="absolute w-1 h-1 bg-brand-primary rounded-full blur-[1px]"
+        />
+      ))}
+    </div>
+  );
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 w-screen h-screen z-[99999] bg-[#F5E8D3] text-brand-text flex flex-col items-center justify-center overflow-hidden font-sans bg-grain"
+      className="fixed inset-0 w-screen h-screen z-[99999] bg-brand-bg text-brand-text flex flex-col items-center justify-center overflow-hidden font-sans bg-grain"
     >
       {/* Deep Immersive Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -567,19 +595,19 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] bg-black/30 backdrop-blur-xl flex items-center justify-center p-4 md:p-8 font-sans select-none"
+            className="fixed inset-0 z-[99999] bg-brand-text/40 backdrop-blur-xl flex items-center justify-center p-4 md:p-8 font-sans select-none"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="relative w-full h-[90vh] max-w-7xl bg-[#F7F7F7] rounded-[3.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.3)] flex flex-col p-8 md:p-12 overflow-hidden"
+              className="relative w-full h-[90vh] max-w-7xl bg-white rounded-[3.5rem] shadow-[0_30px_100px_rgba(255,142,158,0.15)] flex flex-col p-8 md:p-12 overflow-hidden border border-brand-primary/10"
             >
               {/* Header */}
               <header className="flex justify-end items-start mb-8 z-10">
                 <div className="flex gap-6 md:gap-12 text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] text-black/60">
-                  <button onClick={() => setShowSoundMenu(false)} className="hover:text-black transition-colors">Exit</button>
+                  <button onClick={() => setShowSoundMenu(false)} className="hover:text-brand-primary transition-colors">Exit</button>
                 </div>
               </header>
 
@@ -597,7 +625,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                       stiffness: 40,
                       mass: 1 
                     }}
-                    className="relative w-full h-full rounded-full bg-[#0a0a0a] shadow-[0_20px_100px_rgba(0,0,0,0.5)] flex items-center justify-center border-[12px] border-black/5 overflow-hidden"
+                    className="relative w-full h-full rounded-full bg-[#1a1a1a] shadow-[0_20px_100px_rgba(0,0,0,0.4)] flex items-center justify-center border-[12px] border-black/5 overflow-hidden"
                   >
                     {/* Dynamic Center Image Label */}
                     <div className="w-[32%] h-[32%] rounded-full bg-white overflow-hidden relative z-10 shadow-2xl border-4 border-black/10">
@@ -644,7 +672,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                       </AnimatePresence>
                       
                       {/* Inner Hole */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#F7F7F7] shadow-inner border border-black/5" />
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-brand-bg shadow-inner border border-black/5" />
                     </div>
 
                     {/* Grooves / Shine */}
@@ -660,12 +688,12 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                         <motion.h2 
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
-                          className="text-[10vw] md:text-[7vw] lg:text-[7.5vw] font-black leading-[0.8] tracking-[-0.06em] uppercase text-black mb-6 flex flex-col"
+                          className="text-[10vw] md:text-[7vw] lg:text-[7.5vw] font-black leading-[0.8] tracking-[-0.06em] uppercase text-brand-text mb-6 flex flex-col"
                         >
                            <span>SELECT</span>
                            <span>SOUND</span>
                         </motion.h2>
-                        <p className="text-[9px] md:text-[11px] font-bold uppercase tracking-[0.4em] text-black/40">
+                        <p className="text-[9px] md:text-[11px] font-bold uppercase tracking-[0.4em] text-brand-text/40">
                            {selectedSoundscape?.type || 'AMBIENT, FOCUS, ATMOSPHERIC'}
                         </p>
                       </div>
@@ -683,7 +711,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                               setIsMuted(!isMuted);
                             }
                           }}
-                          className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-black/5 flex items-center justify-center hover:bg-black hover:text-white transition-all group shrink-0 shadow-sm"
+                          className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-brand-primary/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all group shrink-0 shadow-sm"
                         >
                           {(selectedSoundscape && !isMuted) ? <Pause className="w-4 h-4 md:w-5 md:h-5 fill-current" /> : <Play className="w-4 h-4 md:w-5 md:h-5 fill-current translate-x-0.5" />}
                         </button>
@@ -691,8 +719,8 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                     </div>
 
                     <div className="w-full">
-                      <div className="flex justify-between items-end border-b border-black/5 pb-3 mb-6">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-red">Popular</span>
+                      <div className="flex justify-between items-end border-b border-brand-primary/10 pb-3 mb-6">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary">Popular</span>
                       </div>
 
                       <div className="space-y-1 max-h-[35vh] overflow-y-auto custom-scrollbar pr-4">
@@ -711,35 +739,35 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                                   setIsMuted(false);
                                 }
                               }}
-                              className="group flex items-center gap-6 py-3 cursor-pointer border-b border-transparent hover:border-black/5 transition-all"
+                              className="group flex items-center gap-6 py-3 cursor-pointer border-b border-transparent hover:border-brand-primary/10 transition-all"
                             >
-                              <span className="text-[9px] font-mono font-bold text-black/20 w-5 flex-shrink-0">
+                              <span className="text-[9px] font-mono font-bold text-brand-text/30 w-5 flex-shrink-0">
                                 {(idx + 1).toString().padStart(2, '0')}
                               </span>
                               
-                              <div className="w-10 h-10 bg-black/5 rounded-sm overflow-hidden flex-shrink-0 group-hover:bg-black/10 transition-colors">
+                              <div className="w-10 h-10 bg-brand-primary/5 rounded-sm overflow-hidden flex-shrink-0 group-hover:bg-brand-primary/10 transition-colors">
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <Music className={cn("w-4 h-4", isPlaying ? "text-brand-red" : "text-black/10")} />
+                                  <Music className={cn("w-4 h-4", isPlaying ? "text-brand-primary" : "text-brand-text/20")} />
                                 </div>
                               </div>
 
                               <div className="flex-1 min-w-0">
-                                <p className={cn("text-xs font-black uppercase tracking-wider truncate transition-colors", isPlaying ? "text-brand-red" : "text-black/80 group-hover:text-black")}>
+                                <p className={cn("text-xs font-black uppercase tracking-wider truncate transition-colors", isPlaying ? "text-brand-primary" : "text-brand-text/80 group-hover:text-brand-text")}>
                                   {s.name}
                                 </p>
-                                <p className="text-[8px] font-bold text-black/30 uppercase tracking-[0.1em] mt-0.5 truncate">
+                                <p className="text-[8px] font-bold text-brand-text/30 uppercase tracking-[0.1em] mt-0.5 truncate">
                                   {s.album || s.artist || 'Summbix Archive'}
                                 </p>
                               </div>
 
                               <div className="flex items-center gap-4 flex-shrink-0">
-                                <div className="text-[9px] font-mono font-bold text-black/20">
+                                <div className="text-[9px] font-mono font-bold text-brand-text/30">
                                   {isPlaying ? 'PLAYING' : isCurrentTrack ? 'PAUSED' : '3:45'}
                                 </div>
                                 {s.id.startsWith('custom-') && (
                                   <button 
                                     onClick={(e) => { e.stopPropagation(); handleDeleteSound(s.id); }}
-                                    className="p-2 text-black/20 hover:text-brand-red transition-colors"
+                                    className="p-2 text-brand-text/20 hover:text-brand-primary transition-colors"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
@@ -753,7 +781,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                       {/* Music Progress Footer - SYNCED WITH TRACK */}
                       <div className="flex justify-between items-center mt-10">
                         <div className="flex items-center gap-6">
-                          <div className="text-[11px] font-mono font-bold tracking-[0.1em] text-black/30">
+                          <div className="text-[11px] font-mono font-bold tracking-[0.1em] text-brand-text/30">
                             {formatDuration(trackTime)} / {formatDuration(trackDuration)}
                           </div>
 
@@ -761,7 +789,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                           <div className="relative flex items-center group/vol">
                             <button 
                               onClick={() => setVolume(volume === 0 ? 0.5 : 0)} 
-                              className="text-black/50 hover:text-black transition-colors shrink-0"
+                              className="text-brand-text/50 hover:text-brand-primary transition-colors shrink-0"
                             >
                               {volume === 0 ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                             </button>
@@ -771,20 +799,20 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                                 min="0" max="1" step="0.01" 
                                 value={volume}
                                 onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                className="w-full h-1 bg-black/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:bg-brand-red [&::-webkit-slider-thumb]:rounded-full"
+                                className="w-full h-1 bg-brand-text/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:bg-brand-primary [&::-webkit-slider-thumb]:rounded-full"
                               />
                             </div>
                           </div>
                         </div>
 
                         <div className="flex gap-6">
-                          <label className="text-[9px] font-black uppercase tracking-[0.2em] border-b border-black/20 pb-1 cursor-pointer hover:border-black transition-all">
+                          <label className="text-[9px] font-black uppercase tracking-[0.2em] border-b border-brand-text/20 pb-1 cursor-pointer hover:border-brand-primary transition-all">
                              Upload
                              <input type="file" accept="audio/*" className="hidden" onChange={handleFileUpload} />
                           </label>
                           <button 
                             onClick={() => setShowSoundMenu(false)}
-                            className="text-[9px] font-black uppercase tracking-[0.2em] border-b border-black/20 pb-1 hover:border-black transition-all"
+                            className="text-[9px] font-black uppercase tracking-[0.2em] border-b border-brand-text/20 pb-1 hover:border-brand-primary transition-all"
                           >
                              Close
                           </button>

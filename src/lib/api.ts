@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API_BASE = (import.meta as any).env.VITE_API_URL || 'http://localhost:4000/api';
 
 let accessToken: string | null = null;
 
@@ -111,6 +111,16 @@ export const authApi = {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async devLogin() {
+    const res = await apiFetch('/auth/dev-login', {
+      method: 'POST',
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    accessToken = data.accessToken;
     return data;
   },
 

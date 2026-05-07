@@ -286,6 +286,66 @@ router.post('/logout', (_req, res: Response) => {
   res.json({ message: 'Logged out successfully' });
 });
 
+// ==================== DEV LOGIN (ONLY FOR LOCAL) ====================
+
+router.post('/dev-login', async (_req, res: Response) => {
+  // Only allow on localhost or if a specific dev flag is set
+  const isLocal = process.env.NODE_ENV !== 'production';
+  
+  if (!isLocal) {
+    res.status(403).json({ error: 'Forbidden' });
+    return;
+  }
+
+  try {
+    // Find or create a default admin user
+    let user = await prisma.user.findFirst({
+      where: { role: 'ADMIN' }
+    });
+
+    if (!user) {
+      // Create a default admin if none exists
+      const hashedPassword = await bcrypt.hash('admin123', 12);
+      user = await prisma.user.create({
+        data: {
+          email: 'admin@summbix.dev',
+          password: hashedPassword,
+          name: 'System Admin',
+          role: 'ADMIN',
+          isVerified: true,
+          bio: 'Development Master Key',
+          avatar: 'Admin'
+        }
+      });
+    }
+
+    const { accessToken, refreshToken } = generateTokens(user.id);
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+        bio: user.bio,
+        role: user.role,
+        createdAt: user.createdAt,
+      },
+      accessToken,
+    });
+  } catch (error) {
+    console.error('Dev login error:', error);
+    res.status(500).json({ error: 'Failed to perform dev login' });
+  }
+});
+
 // ==================== GET CURRENT USER ====================
 
 router.get('/me', authenticate, async (req: AuthRequest, res: Response) => {
