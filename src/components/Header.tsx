@@ -64,14 +64,14 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
   };
 
   return (
-    <header className="relative z-40 w-full pt-8 pb-4 pointer-events-none mb-6">
-      <div className="h-24 bg-white border border-brand-primary/10 rounded-[2.5rem] flex items-center justify-between px-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] pointer-events-auto relative overflow-visible">
-        <div className="flex items-center gap-8">
+    <header className="relative z-40 w-full pt-4 md:pt-8 pb-4 pointer-events-none mb-4 md:mb-6">
+      <div className="h-16 md:h-24 bg-white border border-brand-primary/10 rounded-[1.8rem] md:rounded-[2.5rem] flex items-center justify-between px-4 md:px-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] pointer-events-auto relative overflow-visible">
+        <div className="flex items-center gap-4 md:gap-8">
           <div className="flex flex-col">
-            <h2 className="text-2xl font-black tracking-tight text-brand-text leading-tight">
-              {getGreeting()}, <span className="text-gradient">{profile.name}</span>
+            <h2 className="text-base md:text-2xl font-black tracking-tight text-brand-text leading-tight">
+              {getGreeting()}, <span className="text-gradient">{profile.name.split(' ')[0]}</span>
             </h2>
-            <div className="flex items-center gap-3 mt-1 opacity-60">
+            <div className="hidden md:flex items-center gap-3 mt-1 opacity-60">
                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-text/60">
                  {format(time, 'EEE, MMM do')}
                </p>
@@ -80,10 +80,13 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
                  {format(time, 'HH:mm')}
                </p>
             </div>
+            {/* Mobile: show only time */}
+            <p className="flex md:hidden text-[10px] font-bold text-brand-text/40 tabular-nums mt-0.5">
+              {format(time, 'HH:mm')}
+            </p>
           </div>
         </div>
-
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 md:gap-6">
         {/* Search */}
         <div className="relative group hidden md:block" ref={searchRef}>
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -172,18 +175,18 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
           <button 
             onClick={() => setIsNotifOpen(!isNotifOpen)}
             className={cn(
-              "p-4 rounded-[1.5rem] border transition-all relative group shadow-sm",
+              "p-2.5 md:p-4 rounded-xl md:rounded-[1.5rem] border transition-all relative group shadow-sm",
               isNotifOpen ? "bg-brand-primary border-brand-primary text-white shadow-brand-primary/20 scale-110" : "bg-white/50 border-white/40 hover:bg-white text-brand-text-light hover:shadow-md"
             )}
           >
-            <Bell className="w-6 h-6" />
+            <Bell className="w-5 h-5 md:w-6 md:h-6" />
             {unreadCount > 0 && (
-              <span className="absolute top-3.5 right-3.5 w-2.5 h-2.5 bg-white rounded-full border-2 border-brand-primary shadow-sm animate-pulse" />
+              <span className="absolute top-2 right-2 md:top-3.5 md:right-3.5 w-2 h-2 md:w-2.5 md:h-2.5 bg-white rounded-full border-2 border-brand-primary shadow-sm animate-pulse" />
             )}
           </button>
 
           {isNotifOpen && (
-            <div className="absolute top-full mt-4 right-0 w-96 bg-white/90 backdrop-blur-3xl border border-white/40 rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50">
+            <div className="fixed inset-x-3 top-auto bottom-20 md:bottom-auto md:top-full md:mt-4 md:right-0 md:left-auto md:inset-x-auto md:absolute w-auto md:w-96 bg-white/95 backdrop-blur-3xl border border-white/40 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50 max-h-[60vh] md:max-h-none">
               <div className="p-6 border-b border-brand-bg flex items-center justify-between bg-brand-bg/20">
                 <h3 className="text-xs font-black text-brand-text uppercase tracking-[0.3em]">Oracle Updates</h3>
                 {unreadCount > 0 && <span className="text-[10px] font-black bg-brand-primary text-white px-3 py-1 rounded-full uppercase tracking-widest">{unreadCount} New</span>}
@@ -232,7 +235,7 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
           )}
         </div>
 
-        <div className="relative">
+        <div className="relative hidden md:block">
           <button 
             onClick={() => onNavigate('profile')}
             className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-orange p-[2px] hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-xl shadow-brand-primary/20"
@@ -247,7 +250,7 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
           </button>
         </div>
       </div>
-    </div>
+      </div>
     </header>
   );
 }

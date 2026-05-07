@@ -210,7 +210,7 @@ export default function AnalyticsView({ sessions, goals, tasks, habits, isGuest 
       {/* Header & Filter */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-brand-text uppercase italic">
+          <h2 className="text-2xl md:text-4xl font-black tracking-tight text-brand-text uppercase italic">
             Discipline <span className="text-brand-primary">Node</span>
           </h2>
           <p className="text-brand-text-light mt-1 font-medium tracking-wide">Performance data & neural efficiency tracking.</p>
@@ -247,7 +247,7 @@ export default function AnalyticsView({ sessions, goals, tasks, habits, isGuest 
 
       {/* Focus Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white border border-brand-primary/10 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group">
+        <div className="lg:col-span-2 bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] p-5 md:p-10 shadow-2xl relative overflow-hidden group">
           <div className="flex items-center justify-between mb-12 relative z-10">
             <div>
               <h3 className="font-black text-xl text-brand-text uppercase tracking-tight flex items-center gap-3">
@@ -257,7 +257,7 @@ export default function AnalyticsView({ sessions, goals, tasks, habits, isGuest 
               <p className="text-xs text-brand-text-light font-medium mt-1">Daily energy expenditure (Hours)</p>
             </div>
           </div>
-          <div className="h-80 w-full relative z-10">
+          <div className="h-60 md:h-80 w-full relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={CHART_DATA}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E38569" vertical={false} opacity={0.1} />
@@ -293,7 +293,7 @@ export default function AnalyticsView({ sessions, goals, tasks, habits, isGuest 
           </div>
         </div>
 
-        <div className="bg-white border border-brand-primary/10 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group">
+        <div className="bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] p-5 md:p-10 shadow-2xl relative overflow-hidden group">
           <h3 className="font-black text-xl text-brand-text mb-12 relative z-10 flex items-center gap-3 uppercase tracking-tight">
             <Target className="w-6 h-6 text-brand-blue" />
             Mission Load
@@ -339,7 +339,7 @@ export default function AnalyticsView({ sessions, goals, tasks, habits, isGuest 
       {/* Deep Insights Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Habit Consistency Analysis */}
-        <div className="bg-white border border-brand-primary/10 rounded-[3rem] p-10 shadow-2xl">
+        <div className="bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] p-5 md:p-10 shadow-2xl">
           <div className="flex items-center justify-between mb-10">
             <h3 className="font-black text-xl text-brand-text uppercase tracking-tight flex items-center gap-3">
               <Flame className="w-6 h-6 text-brand-orange" />
@@ -381,7 +381,7 @@ export default function AnalyticsView({ sessions, goals, tasks, habits, isGuest 
         </div>
 
         {/* Task Efficiency Analysis */}
-        <div className="bg-white border border-brand-primary/10 rounded-[3rem] p-10 shadow-2xl">
+        <div className="bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] p-5 md:p-10 shadow-2xl">
           <div className="flex items-center justify-between mb-10">
             <h3 className="font-black text-xl text-brand-text uppercase tracking-tight flex items-center gap-3">
               <ListTodo className="w-6 h-6 text-brand-primary" />
@@ -449,17 +449,17 @@ export default function AnalyticsView({ sessions, goals, tasks, habits, isGuest 
 
 function MetricCard({ title, value, icon, desc }: { title: string, value: string, icon: React.ReactNode, desc?: string }) {
   return (
-    <div className="bg-white border border-brand-primary/10 rounded-[3rem] p-10 shadow-2xl group hover:border-brand-primary/20 transition-all relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:scale-125 group-hover:opacity-10 transition-all duration-700">
+    <div className="bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] p-5 md:p-10 shadow-2xl group hover:border-brand-primary/20 transition-all relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:scale-125 group-hover:opacity-10 transition-all duration-700 hidden md:block">
         {React.cloneElement(icon as React.ReactElement, { size: 80 })}
       </div>
       <div className="relative z-10">
-        <div className="w-14 h-14 rounded-2xl bg-brand-bg flex items-center justify-center mb-8 border border-brand-primary/10 group-hover:scale-110 group-hover:bg-brand-primary/5 transition-all">
-          {React.cloneElement(icon as React.ReactElement, { className: 'w-7 h-7' })}
+        <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-brand-bg flex items-center justify-center mb-4 md:mb-8 border border-brand-primary/10 group-hover:scale-110 group-hover:bg-brand-primary/5 transition-all">
+          {React.cloneElement(icon as React.ReactElement, { className: 'w-5 h-5 md:w-7 md:h-7' })}
         </div>
-        <p className="text-[10px] font-black text-brand-text-light uppercase tracking-[0.2em] mb-1">{title}</p>
-        <p className="text-4xl font-black text-brand-text tracking-tighter">{value}</p>
-        {desc && <p className="text-[9px] font-bold text-brand-text-light/60 uppercase tracking-widest mt-2">{desc}</p>}
+        <p className="text-[9px] md:text-[10px] font-black text-brand-text-light uppercase tracking-[0.15em] md:tracking-[0.2em] mb-1">{title}</p>
+        <p className="text-2xl md:text-4xl font-black text-brand-text tracking-tighter">{value}</p>
+        {desc && <p className="text-[8px] md:text-[9px] font-bold text-brand-text-light/60 uppercase tracking-widest mt-1 md:mt-2">{desc}</p>}
       </div>
     </div>
   );

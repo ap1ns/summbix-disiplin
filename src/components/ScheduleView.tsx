@@ -111,7 +111,7 @@ export default function ScheduleView({ tasks, habits, sessions, goals }: Schedul
               <CalendarIcon className="w-6 h-6 text-brand-primary" />
             </div>
             <div>
-              <h2 className="text-4xl font-black tracking-tighter text-brand-text">Timeline <span className="text-brand-primary/40">Nexus</span></h2>
+              <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-brand-text">Timeline <span className="text-brand-primary/40">Nexus</span></h2>
               <p className="text-[10px] text-brand-text-light font-black uppercase tracking-[0.3em] mt-1 opacity-60">Chronological Operations</p>
             </div>
           </motion.div>
@@ -122,7 +122,7 @@ export default function ScheduleView({ tasks, habits, sessions, goals }: Schedul
         {/* Left Column: Calendar & Flexible */}
         <div className="lg:col-span-4 xl:col-span-3 space-y-8">
           {/* Calendar */}
-          <div className="bg-white border border-brand-primary/10 rounded-[2.5rem] p-8 shadow-xl">
+          <div className="bg-white border border-brand-primary/10 rounded-[1.8rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-xl">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-xl font-black text-brand-text tracking-tighter">
                 {format(calendarMonth, 'MMMM')} <span className="text-brand-primary/40">{format(calendarMonth, 'yyyy')}</span>
@@ -178,7 +178,7 @@ export default function ScheduleView({ tasks, habits, sessions, goals }: Schedul
           </div>
 
           {/* Flexible Missions */}
-          <div className="bg-white border border-brand-primary/10 rounded-[2.5rem] p-8 shadow-xl">
+          <div className="bg-white border border-brand-primary/10 rounded-[1.8rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-xl">
             <h3 className="text-sm font-black text-brand-text uppercase tracking-widest mb-6 flex items-center gap-3">
               <Layout className="w-4 h-4 text-brand-primary" />
               Flexible Missions
@@ -223,7 +223,7 @@ export default function ScheduleView({ tasks, habits, sessions, goals }: Schedul
 
         {/* Right Column: Timeline Agenda */}
         <div className="lg:col-span-8 xl:col-span-9">
-          <div className="bg-white border border-brand-primary/10 rounded-[3rem] p-10 shadow-2xl min-h-[600px]">
+          <div className="bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] p-5 md:p-10 shadow-2xl min-h-[400px] md:min-h-[600px]">
             <div className="flex items-center justify-between mb-12 border-b border-brand-primary/5 pb-8">
               <div>
                 <h3 className="text-2xl font-black text-brand-text tracking-tighter">

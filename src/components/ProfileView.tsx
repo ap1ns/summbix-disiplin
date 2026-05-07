@@ -103,7 +103,7 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
 
   return (
 
-    <div className="max-w-4xl mx-auto py-8">
+    <div className="max-w-4xl mx-auto py-4 md:py-8">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -111,9 +111,9 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
       >
         {/* Header/Cover Area */}
         <div className="h-32 bg-gradient-to-r from-brand-primary/20 via-brand-orange/20 to-brand-primary/10 relative">
-          <div className="absolute -bottom-12 left-10">
+          <div className="absolute -bottom-10 md:-bottom-12 left-5 md:left-10">
             <div className="relative group">
-              <div className="w-24 h-24 rounded-3xl bg-white shadow-2xl flex items-center justify-center border-4 border-white overflow-hidden">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-3xl bg-white shadow-2xl flex items-center justify-center border-4 border-white overflow-hidden">
                 <img 
                   src={getAvatarUrl(avatar)} 
                   alt="Avatar" 
@@ -121,8 +121,8 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
                 />
               </div>
               {!isGuest && (
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity rounded-3xl text-white">
-                  <div className="flex gap-2 mb-2">
+                <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity rounded-2xl md:rounded-3xl text-white">
+                  <div className="flex gap-2 mb-2 scale-75 md:scale-100">
                     <button 
                       type="button"
                       onClick={handleRandomizeAvatar}
@@ -148,10 +148,10 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
 
         </div>
 
-        <div className="pt-16 px-10 pb-10">
-          <div className="flex items-start justify-between mb-10">
+        <div className="pt-14 md:pt-16 px-5 md:px-10 pb-6 md:pb-10">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6 md:mb-10">
             <div>
-              <h1 className="text-3xl font-black text-brand-text tracking-tight uppercase italic">{profile.name}</h1>
+              <h1 className="text-2xl md:text-3xl font-black text-brand-text tracking-tight uppercase italic">{profile.name}</h1>
               <p className="text-brand-text-light font-medium">{profile.bio}</p>
               <div className="flex items-center gap-2 mt-2">
                 <span className="px-2 py-0.5 bg-brand-primary/10 text-brand-primary text-[10px] font-black uppercase tracking-widest rounded-full">
@@ -165,7 +165,7 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
             
             <button 
               onClick={onLogout}
-              className="px-6 py-3 bg-red-50 text-red-500 border border-red-100 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"
+              className="px-4 md:px-6 py-2.5 md:py-3 bg-red-50 text-red-500 border border-red-100 rounded-xl md:rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 shrink-0 self-start"
             >
               <LogOut className="w-4 h-4" /> Terminate Session
             </button>
@@ -324,14 +324,14 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileV
             >
               <div className="h-2 bg-red-500 w-full" />
               
-              <div className="p-12 text-center">
-                <div className="w-24 h-24 bg-red-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
-                  <AlertCircle className="w-12 h-12 text-red-500" />
+              <div className="p-6 md:p-12 text-center">
+                <div className="w-16 h-16 md:w-24 md:h-24 bg-red-50 rounded-[1.5rem] md:rounded-[2.5rem] flex items-center justify-center mx-auto mb-4 md:mb-8 shadow-inner">
+                  <AlertCircle className="w-8 h-8 md:w-12 md:h-12 text-red-500" />
                 </div>
                 
-                <h2 className="text-3xl font-black text-brand-text mb-4 uppercase italic tracking-tight">TERMINATE NODE?</h2>
+                <h2 className="text-xl md:text-3xl font-black text-brand-text mb-3 md:mb-4 uppercase italic tracking-tight">TERMINATE NODE?</h2>
                 
-                <p className="text-brand-text-light font-medium leading-relaxed mb-10">
+                <p className="text-[11px] md:text-base text-brand-text-light font-medium leading-relaxed mb-6 md:mb-10">
                   This action is <span className="text-red-500 font-black italic">IRREVERSIBLE</span>. All your strategic goals, habit patterns, and focus logs will be purged from the Summbix network forever.
                 </p>
                 

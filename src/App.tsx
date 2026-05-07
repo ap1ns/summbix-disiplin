@@ -314,11 +314,13 @@ export default function App() {
     <div className="relative h-screen w-screen overflow-hidden bg-brand-bg text-brand-text selection:bg-brand-primary/20 font-sans">
       {/* Main Application Layout */}
       <div className="flex h-full w-full relative">
+        {/* Sidebar: rendered as fixed bottom nav on mobile, side panel on desktop */}
         <Sidebar currentView={currentView} setView={setCurrentView} />
         
         <main className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
           <div className="flex-1 overflow-y-auto relative scrollbar-hide">
-            <div className="max-w-[1600px] mx-auto px-10">
+            {/* px-4 on mobile, px-10 on desktop */}
+            <div className="max-w-[1600px] mx-auto px-4 md:px-10">
               <Header 
                 goals={computedGoals} 
                 tasks={tasks} 
@@ -337,11 +339,16 @@ export default function App() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentView}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="h-full pb-20"
+                  initial={{ opacity: 0, y: 20, scale: 0.98, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -20, scale: 0.98, filter: 'blur(10px)' }}
+                  transition={{ 
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 200,
+                    mass: 0.8
+                  }}
+                  className="h-full pb-28 md:pb-20"
                 >
                   {renderView()}
                 </motion.div>

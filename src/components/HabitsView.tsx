@@ -117,31 +117,31 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
       {/* Header Section */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-5xl font-black tracking-tighter text-brand-text flex items-center gap-6">
-            <div className="w-16 h-16 rounded-[2rem] bg-brand-primary/10 flex items-center justify-center shadow-inner">
-              <Repeat className="w-8 h-8 text-brand-primary" />
+          <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-brand-text flex items-center gap-4 md:gap-6">
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1.5rem] md:rounded-[2rem] bg-brand-primary/10 flex items-center justify-center shadow-inner">
+              <Repeat className="w-6 h-6 md:w-8 md:h-8 text-brand-primary" />
             </div>
             Daily Rituals
           </h2>
-          <p className="text-brand-text-light font-medium mt-4 px-2 text-lg">Systematize your excellence through consistent action.</p>
+          <p className="text-brand-text-light font-medium mt-2 md:mt-4 px-2 text-sm md:text-lg hidden md:block">Systematize your excellence through consistent action.</p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="bg-white border border-brand-primary/10 rounded-3xl p-2 flex items-center gap-2 shadow-xl">
-            <div className="flex flex-col items-center px-6 py-2 border-r border-brand-primary/5">
-              <span className="text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-1">Today</span>
-              <span className="text-2xl font-black text-brand-primary">{completedToday}/{totalHabits}</span>
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="bg-white border border-brand-primary/10 rounded-2xl md:rounded-3xl p-1.5 md:p-2 flex items-center gap-1 md:gap-2 shadow-xl">
+            <div className="flex flex-col items-center px-3 md:px-6 py-1.5 md:py-2 border-r border-brand-primary/5">
+              <span className="text-[9px] md:text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-0.5 md:mb-1">Today</span>
+              <span className="text-lg md:text-2xl font-black text-brand-primary">{completedToday}/{totalHabits}</span>
             </div>
-            <div className="flex flex-col items-center px-6 py-2">
-              <span className="text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-1">Power</span>
-              <span className="text-2xl font-black text-brand-orange">{completionRate}%</span>
+            <div className="flex flex-col items-center px-3 md:px-6 py-1.5 md:py-2">
+              <span className="text-[9px] md:text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-0.5 md:mb-1">Power</span>
+              <span className="text-lg md:text-2xl font-black text-brand-orange">{completionRate}%</span>
             </div>
           </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsHabitModalOpen(true)}
-            className="h-16 px-8 bg-brand-primary text-white rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl shadow-brand-primary/30 flex items-center gap-3"
+            className="h-12 md:h-16 px-5 md:px-8 bg-brand-primary text-white rounded-[1.5rem] md:rounded-[2rem] font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-[10px] md:text-xs shadow-2xl shadow-brand-primary/30 flex items-center gap-2 md:gap-3"
           >
             <Plus className="w-5 h-5" />
             New Ritual
@@ -176,7 +176,7 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
       </section>
 
       {/* Habits Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <AnimatePresence mode="popLayout">
           {filteredHabits.map((habit, idx) => {
             const isDone = isHabitDoneToday(habit);
@@ -191,7 +191,7 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ delay: idx * 0.05 }}
                 className={cn(
-                  "group relative bg-white border rounded-[3rem] p-8 transition-all hover:shadow-2xl overflow-hidden",
+                  "group relative bg-white border rounded-[2rem] md:rounded-[3rem] p-5 md:p-8 transition-all hover:shadow-2xl overflow-hidden",
                   isDone ? "border-brand-green/20 bg-brand-green/[0.02]" : "border-brand-primary/10"
                 )}
               >
@@ -214,7 +214,7 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
                     <CheckCircle2 className={cn("w-7 h-7", isDone ? "opacity-100" : "opacity-0 group-hover:opacity-100")} />
                   </button>
 
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                  <div className="flex items-center gap-2 md:opacity-0 md:group-hover:opacity-100 transition-all md:translate-x-4 md:group-hover:translate-x-0">
                     <button
                       onClick={() => { setEditingHabit(habit); setIsHabitModalOpen(true); }}
                       className="p-3 bg-brand-bg hover:bg-white rounded-xl text-brand-text-light hover:text-brand-primary transition-all shadow-sm border border-brand-primary/5"

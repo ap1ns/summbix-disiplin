@@ -294,14 +294,14 @@ export default function Login({ onLogin }: LoginProps) {
         }}
         transition={{ type: "spring", stiffness: 60, damping: 15 }}
         style={{ transformStyle: 'preserve-3d' }}
-        className="w-full max-w-5xl h-[750px] relative z-10"
+        className="w-full max-w-5xl min-h-[600px] md:h-[750px] relative z-10"
       >
         {/* FRONT SIDE (Login / Sign-up) */}
         <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] z-20">
-          <div className="w-full h-full bg-white rounded-[3.5rem] shadow-[0_60px_150px_rgba(227,133,105,0.15)] overflow-hidden relative border border-white group">
+          <div className="w-full h-full bg-white rounded-[2.5rem] md:rounded-[3.5rem] shadow-[0_40px_100px_rgba(227,133,105,0.12)] md:shadow-[0_60px_150px_rgba(227,133,105,0.15)] overflow-hidden relative border border-white group">
             {/* Corner Brackets Decorations */}
-            <div className="absolute top-8 left-8 w-12 h-12 border-t-2 border-l-2 border-brand-primary/10 rounded-tl-2xl z-30 group-hover:border-brand-primary/30 transition-colors" />
-            <div className="absolute bottom-8 right-8 w-12 h-12 border-b-2 border-r-2 border-brand-primary/10 rounded-br-2xl z-30 group-hover:border-brand-primary/30 transition-colors" />
+            <div className="absolute top-6 left-6 md:top-8 md:left-8 w-8 h-8 md:w-12 md:h-12 border-t-2 border-l-2 border-brand-primary/10 rounded-tl-xl md:rounded-tl-2xl z-30 group-hover:border-brand-primary/30 transition-colors" />
+            <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 w-8 h-8 md:w-12 md:h-12 border-b-2 border-r-2 border-brand-primary/10 rounded-br-xl md:rounded-br-2xl z-30 group-hover:border-brand-primary/30 transition-colors" />
 
             {/* SLIDING OVERLAY (The Picture Side) */}
             <motion.div
@@ -365,11 +365,11 @@ export default function Login({ onLogin }: LoginProps) {
               <motion.div
                 animate={{ x: isLogin ? '-100%' : '0%', opacity: isLogin ? 0 : 1 }}
                 transition={{ type: "spring", stiffness: 100, damping: 22 }}
-                className="w-full md:w-1/2 h-full flex flex-col justify-center p-10 md:p-20"
+                className="w-full md:w-1/2 h-full flex flex-col justify-center p-6 sm:p-10 md:p-20"
               >
                 <div className="max-w-md mx-auto w-full">
                   <div className="mb-10">
-                    <h3 className="text-4xl font-black text-brand-text mb-2 tracking-tight">Create Node</h3>
+                    <h3 className="text-2xl md:text-4xl font-black text-brand-text mb-2 tracking-tight">Create Node</h3>
                     <p className="text-brand-text-light font-medium">Initialize your strategic discipline interface.</p>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-5">
@@ -431,6 +431,16 @@ export default function Login({ onLogin }: LoginProps) {
                       {isLoading ? "Initializing..." : "Initialize Node"}
                     </button>
                   </form>
+                  {/* Mobile toggle for signup */}
+                  <div className="mt-6 text-center md:hidden">
+                    <p className="text-[10px] font-bold text-brand-text-light/50 uppercase tracking-widest mb-2">Already have an account?</p>
+                    <button
+                      onClick={() => { setIsLogin(true); setError(null); setSuccess(null); }}
+                      className="text-brand-primary font-black text-xs uppercase tracking-widest hover:underline"
+                    >
+                      Sign In Instead →
+                    </button>
+                  </div>
                 </div>
               </motion.div>
 
@@ -438,11 +448,11 @@ export default function Login({ onLogin }: LoginProps) {
               <motion.div
                 animate={{ x: isLogin ? '0%' : '100%', opacity: isLogin ? 1 : 0 }}
                 transition={{ type: "spring", stiffness: 100, damping: 22 }}
-                className="w-full md:w-1/2 h-full flex flex-col justify-center p-10 md:p-20"
+                className="w-full md:w-1/2 h-full flex flex-col justify-center p-6 sm:p-10 md:p-20"
               >
                 <div className="max-w-md mx-auto w-full">
                   <div className="mb-10 text-right md:text-left">
-                    <h3 className="text-4xl font-black text-brand-primary mb-2 tracking-tight">Access Node</h3>
+                    <h3 className="text-2xl md:text-4xl font-black text-brand-primary mb-2 tracking-tight">Access Node</h3>
                     <p className="text-brand-text-light font-medium">Connect to your discipline sequence.</p>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-6">
@@ -517,6 +527,16 @@ export default function Login({ onLogin }: LoginProps) {
                       >
                         <User className="w-4 h-4" /> Try Guest Mode
                       </button>
+                      {/* Mobile toggle for login */}
+                      <div className="mt-4 text-center md:hidden">
+                        <p className="text-[10px] font-bold text-brand-text-light/50 uppercase tracking-widest mb-2">Don't have an account?</p>
+                        <button
+                          onClick={() => { setIsLogin(false); setError(null); setSuccess(null); }}
+                          className="text-brand-primary font-black text-xs uppercase tracking-widest hover:underline"
+                        >
+                          Create Account →
+                        </button>
+                      </div>
                     </div>
                   </form>
                 </div>
@@ -527,7 +547,7 @@ export default function Login({ onLogin }: LoginProps) {
 
         {/* BACK SIDE (OTP Verification & Forgot Password) */}
         <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] z-10">
-          <div className="w-full h-full bg-brand-bg rounded-[3.5rem] shadow-[0_60px_150px_rgba(0,0,0,0.1)] overflow-hidden relative border border-white flex flex-col items-center justify-center p-12 text-center">
+          <div className="w-full h-full bg-brand-bg rounded-[2.5rem] md:rounded-[3.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.08)] md:shadow-[0_60px_150px_rgba(0,0,0,0.1)] overflow-hidden relative border border-white flex flex-col items-center justify-center p-6 sm:p-8 md:p-12 text-center">
             {/* Security Grid Background */}
             <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#e38569 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
@@ -542,7 +562,7 @@ export default function Login({ onLogin }: LoginProps) {
                   </div>
 
                   <div className="space-y-4">
-                    <h2 className="text-5xl font-black text-brand-text tracking-tighter uppercase italic italic-gradient bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-orange">
+                    <h2 className="text-3xl md:text-5xl font-black text-brand-text tracking-tighter uppercase italic italic-gradient bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-orange">
                       Verify Identity
                     </h2>
                     <p className="text-brand-text-light font-medium leading-relaxed text-lg">
@@ -601,7 +621,7 @@ export default function Login({ onLogin }: LoginProps) {
                   </div>
 
                   <div className="space-y-4">
-                    <h2 className="text-5xl font-black text-brand-text tracking-tighter uppercase italic italic-gradient bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-orange">
+                    <h2 className="text-3xl md:text-5xl font-black text-brand-text tracking-tighter uppercase italic italic-gradient bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-orange">
                       {isSubmitted ? "Link Transmitted" : "Security Breach?"}
                     </h2>
                     <p className="text-brand-text-light font-medium leading-relaxed text-lg">

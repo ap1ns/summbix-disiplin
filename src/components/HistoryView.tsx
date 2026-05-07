@@ -88,35 +88,35 @@ export default function HistoryView({ tasks, sessions, goals }: HistoryViewProps
   return (
     <div className="flex h-full w-full gap-8 pt-4">
       
-      <div className="flex-1 flex flex-col h-full bg-white border border-brand-primary/10 rounded-[3rem] shadow-2xl overflow-hidden relative">
+      <div className="flex-1 flex flex-col h-full bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden relative">
         {/* Header */}
-        <div className="shrink-0 p-10 lg:p-14 border-b border-brand-primary/5 relative overflow-hidden bg-gradient-to-br from-brand-primary/5 to-transparent">
+        <div className="shrink-0 p-5 md:p-10 lg:p-14 border-b border-brand-primary/5 relative overflow-hidden bg-gradient-to-br from-brand-primary/5 to-transparent">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-primary/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
           
-          <div className="relative z-10 flex items-center gap-8">
-            <div className="w-24 h-24 rounded-[2.5rem] flex items-center justify-center shrink-0 bg-brand-primary text-white shadow-2xl shadow-brand-primary/30 transform rotate-3">
-              <Archive className="w-12 h-12" />
+          <div className="relative z-10 flex items-center gap-4 md:gap-8">
+            <div className="w-14 h-14 md:w-24 md:h-24 rounded-[1.5rem] md:rounded-[2.5rem] flex items-center justify-center shrink-0 bg-brand-primary text-white shadow-2xl shadow-brand-primary/30 transform rotate-3">
+              <Archive className="w-7 h-7 md:w-12 md:h-12" />
             </div>
             <div>
-              <h1 className="text-5xl font-black text-brand-text tracking-tight mb-3">The Archive</h1>
-              <p className="text-brand-text-light text-xl font-medium">Your legacy of discipline and conquered challenges.</p>
+              <h1 className="text-2xl md:text-5xl font-black text-brand-text tracking-tight mb-1 md:mb-3">The Archive</h1>
+              <p className="text-brand-text-light text-sm md:text-xl font-medium hidden md:block">Your legacy of discipline and conquered challenges.</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mt-12 relative z-10">
-            <div className="bg-white border border-brand-primary/10 rounded-3xl p-6 shadow-sm">
-              <p className="text-[10px] font-black text-brand-text-light uppercase tracking-[0.2em] mb-2">Tasks Conquered</p>
-              <p className="text-4xl font-black text-brand-text">{totalCompleted}</p>
+          <div className="grid grid-cols-2 gap-3 md:gap-8 mt-5 md:mt-12 relative z-10">
+            <div className="bg-white border border-brand-primary/10 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm">
+              <p className="text-[9px] md:text-[10px] font-black text-brand-text-light uppercase tracking-[0.2em] mb-1 md:mb-2">Tasks Conquered</p>
+              <p className="text-2xl md:text-4xl font-black text-brand-text">{totalCompleted}</p>
             </div>
-            <div className="bg-white border border-brand-primary/10 rounded-3xl p-6 shadow-sm">
-              <p className="text-[10px] font-black text-brand-text-light uppercase tracking-[0.2em] mb-2">Deep Work</p>
-              <p className="text-4xl font-black text-brand-text">{totalFocusHours} <span className="text-lg text-brand-text-light">hours</span></p>
+            <div className="bg-white border border-brand-primary/10 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm">
+              <p className="text-[9px] md:text-[10px] font-black text-brand-text-light uppercase tracking-[0.2em] mb-1 md:mb-2">Deep Work</p>
+              <p className="text-2xl md:text-4xl font-black text-brand-text">{totalFocusHours} <span className="text-sm md:text-lg text-brand-text-light">hours</span></p>
             </div>
           </div>
         </div>
 
         {/* Timeline */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-10 lg:p-14 relative bg-white">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 md:p-10 lg:p-14 relative bg-white">
           {sortedDates.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center">
               <Archive className="w-32 h-32 text-brand-bg mb-8" />

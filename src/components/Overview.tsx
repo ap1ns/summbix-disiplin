@@ -346,7 +346,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
   }
 
   return (
-    <div className="w-full h-full grid grid-cols-12 gap-10 relative pt-4">
+    <div className="w-full h-full grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 relative pt-4">
       {/* Decorative Blob Backgrounds */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div 
@@ -362,10 +362,10 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
       </div>
 
       {/* Left Column - Main Stats & Goals */}
-      <div className="col-span-12 lg:col-span-8 space-y-10 relative z-10">
+      <div className="lg:col-span-8 space-y-8 md:space-y-10 relative z-10">
         
         {/* Daily Stats Summary */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="grid grid-cols-3 gap-3 md:gap-4">
           <StatCard 
             label="Focus Hours" 
             value={`${focusHours}h ${focusMins}m`} 
@@ -391,23 +391,24 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
 
         {/* Goals Section */}
         <section>
-          <div className="flex items-end justify-between mb-8">
+          <div className="flex items-end justify-between mb-6 md:mb-8">
             <div>
-              <h3 className="text-3xl font-black tracking-tight flex items-center gap-4 text-brand-text">
-                <div className="w-10 h-10 rounded-2xl bg-brand-primary/10 flex items-center justify-center">
-                  <Target className="w-6 h-6 text-brand-primary" />
+              <h3 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3 md:gap-4 text-brand-text">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-brand-primary/10 flex items-center justify-center">
+                  <Target className="w-4 h-4 md:w-6 md:h-6 text-brand-primary" />
                 </div>
                 Active Goals
               </h3>
-              <p className="text-xs text-brand-text-light font-medium mt-2 px-14">Your main objectives for this season</p>
+              <p className="text-xs text-brand-text-light font-medium mt-1 md:mt-2 px-11 md:px-14 hidden md:block">Your main objectives for this season</p>
             </div>
             <motion.button 
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onNavigate?.('goals')} 
-              className="group flex items-center gap-2 px-6 py-3 bg-white border border-brand-primary/5 rounded-2xl text-[10px] font-black text-brand-text-light hover:text-brand-primary hover:border-brand-primary/20 transition-all uppercase tracking-[0.2em] shadow-sm hover:shadow-md"
+              className="group flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-white border border-brand-primary/5 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black text-brand-text-light hover:text-brand-primary hover:border-brand-primary/20 transition-all uppercase tracking-[0.15em] md:tracking-[0.2em] shadow-sm hover:shadow-md shrink-0"
             >
-              Explore Missions 
+              <span className="hidden md:inline">Explore Missions</span>
+              <span className="md:hidden">More</span>
               <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </motion.button>
           </div>
@@ -436,22 +437,22 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
 
         {/* Tasks Section */}
         <section>
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6 md:mb-8">
             <div>
-              <h3 className="text-3xl font-black tracking-tight flex items-center gap-4 text-brand-text">
-                <div className="w-10 h-10 rounded-2xl bg-brand-primary/10 flex items-center justify-center">
-                  <Target className="w-6 h-6 text-brand-primary" />
+              <h3 className="text-xl md:text-3xl font-black tracking-tight flex items-center gap-3 md:gap-4 text-brand-text">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-brand-primary/10 flex items-center justify-center">
+                  <Target className="w-4 h-4 md:w-6 md:h-6 text-brand-primary" />
                 </div>
                 {selectedGoalId ? "Mission Tasks" : "Daily Missions"}
               </h3>
-              <p className="text-xs text-brand-text-light font-medium mt-2 px-14">
+              <p className="text-xs text-brand-text-light font-medium mt-1 md:mt-2 px-11 md:px-14 hidden md:block">
                 {selectedGoalId ? `Objectives for ${goals.find(g => g.id === selectedGoalId)?.title}` : "Your primary objectives for today"}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <button 
                 onClick={() => setIsTaskModalOpen(true)}
-                className="px-6 py-3 text-[10px] font-black bg-brand-primary text-white rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20 uppercase tracking-[0.2em]"
+                className="px-4 md:px-6 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black bg-brand-primary text-white rounded-xl md:rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20 uppercase tracking-[0.15em] md:tracking-[0.2em]"
               >
                 New Task
               </button>
@@ -459,14 +460,14 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onNavigate?.('schedule')} 
-                className="group flex items-center gap-2 px-6 py-3 bg-white border border-brand-primary/5 rounded-2xl text-[10px] font-black text-brand-text-light hover:text-brand-primary hover:border-brand-primary/20 transition-all uppercase tracking-[0.2em] shadow-sm hover:shadow-md"
+                className="group hidden md:flex items-center gap-2 px-6 py-3 bg-white border border-brand-primary/5 rounded-2xl text-[10px] font-black text-brand-text-light hover:text-brand-primary hover:border-brand-primary/20 transition-all uppercase tracking-[0.2em] shadow-sm hover:shadow-md"
               >
                 Schedule
                 <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </motion.button>
             </div>
           </div>
-          <div className="bg-white border border-brand-primary/10 rounded-[2.5rem] overflow-hidden shadow-xl">
+          <div className="bg-white border border-brand-primary/10 rounded-[1.8rem] md:rounded-[2.5rem] overflow-hidden shadow-xl">
             {displayedTasks.slice(0, 5).map((task, idx) => {
               const taskSessions = sessions.filter(s => s.taskId === task.id);
               const totalTaskSeconds = taskSessions.reduce((acc, s) => acc + s.duration, 0);
@@ -559,7 +560,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
                     </div>
                   </div>
                   
-                  <div className="opacity-0 group-hover:opacity-100 flex items-center gap-2 transition-all translate-x-4 group-hover:translate-x-0">
+                  <div className="flex items-center gap-2 md:opacity-0 md:group-hover:opacity-100 transition-all md:translate-x-4 md:group-hover:translate-x-0 shrink-0">
                     <button onClick={(e) => { e.stopPropagation(); setEditingTask(task); setIsTaskModalOpen(true); }} className="p-3 bg-white border border-brand-primary/5 hover:border-brand-primary/20 rounded-2xl text-brand-text-light hover:text-brand-primary transition-all shadow-sm">
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -593,10 +594,10 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
       </div>
 
       {/* Right Column - Schedule & Habit Tracker */}
-      <div className="col-span-12 lg:col-span-4 space-y-8">
+      <div className="lg:col-span-4 space-y-6 md:space-y-8">
         
         {/* Timeline / Time Blocking */}
-        <section className="bg-white border border-brand-primary/10 rounded-[2.5rem] p-8 flex flex-col h-[600px] shadow-2xl relative overflow-hidden">
+        <section className="bg-white border border-brand-primary/10 rounded-[1.8rem] md:rounded-[2.5rem] p-5 md:p-8 flex flex-col h-[450px] md:h-[600px] shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 blur-3xl rounded-full" />
           <div className="flex items-center justify-between mb-8 relative z-10">
             <h3 className="font-black text-lg text-brand-text flex items-center gap-3">
@@ -625,7 +626,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
         </section>
 
         {/* Discipline Tracker / Habits */}
-        <section className="bg-white border border-brand-primary/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+        <section className="bg-white border border-brand-primary/10 rounded-[1.8rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-2xl relative overflow-hidden">
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-orange/5 blur-3xl rounded-full" />
           <div className="flex items-center justify-between mb-8 relative z-10">
             <div>
@@ -729,14 +730,14 @@ function StatCard({ label, value, sub, icon, color }: { label: string, value: st
       whileTap={{ scale: 0.98 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[2.5rem] p-8 border border-brand-primary/5 shadow-xl hover:shadow-2xl transition-all group overflow-hidden relative"
+      className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-8 border border-brand-primary/5 shadow-xl hover:shadow-2xl transition-all group overflow-hidden relative"
     >
-      <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-150 duration-700">
+      <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-150 duration-700 hidden md:block">
         {icon}
       </div>
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between mb-3 md:mb-6">
         <div className={cn(
-          "p-4 rounded-2xl shadow-lg transform group-hover:rotate-12 transition-transform duration-500",
+          "p-2 md:p-4 rounded-xl md:rounded-2xl shadow-lg transform group-hover:rotate-12 transition-transform duration-500",
           color === 'orange' ? "bg-brand-orange/10 text-brand-orange" : 
           color === 'green' ? "bg-brand-green/10 text-brand-green" : 
           "bg-brand-primary/10 text-brand-primary"
@@ -745,9 +746,9 @@ function StatCard({ label, value, sub, icon, color }: { label: string, value: st
         </div>
       </div>
       <div>
-        <p className="text-[10px] font-black text-brand-text-light uppercase tracking-[0.3em] mb-2">{label}</p>
-        <h3 className="text-4xl font-black text-brand-text tracking-tight mb-2 group-hover:text-brand-primary transition-colors">{value}</h3>
-        <p className="text-xs text-brand-text-light font-medium leading-relaxed">{sub}</p>
+        <p className="text-[8px] md:text-[10px] font-black text-brand-text-light uppercase tracking-[0.2em] md:tracking-[0.3em] mb-1 md:mb-2">{label}</p>
+        <h3 className="text-xl md:text-4xl font-black text-brand-text tracking-tight mb-1 md:mb-2 group-hover:text-brand-primary transition-colors">{value}</h3>
+        <p className="text-[10px] md:text-xs text-brand-text-light font-medium leading-relaxed hidden md:block">{sub}</p>
       </div>
     </motion.div>
   );
@@ -797,8 +798,8 @@ const GoalCard: React.FC<{ goal: Goal, isSelected: boolean, onSelect: (id: strin
       onClick={() => onSelect(goal.id)} 
       whileHover={{ y: -5, scale: 1.01 }}
       className={cn(
-        "relative rounded-[3rem] p-10 transition-all cursor-pointer group overflow-hidden border shadow-2xl",
-        isSelected ? "border-brand-primary/40 bg-white ring-8 ring-brand-primary/5" : "border-brand-primary/5 hover:border-brand-primary/20 bg-white/60 backdrop-blur-md",
+        "relative rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 transition-all cursor-pointer group overflow-hidden border shadow-2xl",
+        isSelected ? "border-brand-primary/40 bg-white ring-4 md:ring-8 ring-brand-primary/5" : "border-brand-primary/5 hover:border-brand-primary/20 bg-white/60 backdrop-blur-md",
         integrityScore >= 100 && !isCompleted && "ring-2 ring-brand-green/20"
       )}
     >
@@ -812,11 +813,11 @@ const GoalCard: React.FC<{ goal: Goal, isSelected: boolean, onSelect: (id: strin
       </div>
 
       <div className="relative z-10 flex items-start justify-between mb-8">
-        <div className="pr-6 flex-1">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-5 h-5 rounded-full shadow-lg shrink-0 animate-pulse" style={{ backgroundColor: goal.color }} />
+          <div className="pr-4 md:pr-6 flex-1">
+          <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full shadow-lg shrink-0 animate-pulse" style={{ backgroundColor: goal.color }} />
             <div className="flex flex-col">
-              <h4 className="font-black text-brand-text text-2xl tracking-tight leading-tight line-clamp-1">{goal.title}</h4>
+              <h4 className="font-black text-brand-text text-lg md:text-2xl tracking-tight leading-tight line-clamp-1">{goal.title}</h4>
               <div className="flex items-center gap-2 mt-1">
                 {isCompleted ? (
                   <span className="text-[8px] font-black text-brand-green uppercase tracking-widest">Mission Accomplished</span>
@@ -1018,7 +1019,7 @@ const HabitItem: React.FC<{ label: string, done: boolean, onClick: () => void, o
           )}
         </div>
       </div>
-      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 shrink-0">
+      <div className="flex items-center gap-2 md:opacity-0 md:group-hover:opacity-100 transition-all md:translate-x-4 md:group-hover:translate-x-0 shrink-0">
         <button 
           onClick={(e) => { e.stopPropagation(); onEdit(); }} 
           className="p-3 bg-brand-bg rounded-2xl transition-all text-brand-text-light hover:text-brand-primary hover:bg-white shadow-sm border border-brand-primary/5"
@@ -1094,14 +1095,14 @@ export function GoalModal({ isOpen, onClose, onAdd, initialGoal }: { isOpen: boo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2.5rem] w-full max-w-md p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
-        <div className="flex items-center justify-between mb-8">
-          <h3 className="text-2xl font-black text-brand-text">{initialGoal ? "Edit Mission" : "Launch New Mission"}</h3>
+      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialGoal ? "Edit Mission" : "Launch New Mission"}</h3>
           <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>
-        <div className="space-y-5 overflow-y-auto max-h-[70vh] pr-2 scrollbar-hide">
+        <div className="space-y-4 md:space-y-5">
           <div>
             <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Mission Title</label>
             <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner transition-all" placeholder="e.g. Master React Framework" />
@@ -1184,14 +1185,14 @@ export function TaskModal({ isOpen, onClose, onAdd, initialTask, goals, defaultG
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2.5rem] w-full max-w-md p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
-        <div className="flex items-center justify-between mb-8">
-          <h3 className="text-2xl font-black text-brand-text">{initialTask ? "Edit Task" : "Add New Task"}</h3>
+      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialTask ? "Edit Task" : "Add New Task"}</h3>
           <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>
-        <div className="space-y-5">
+        <div className="space-y-4 md:space-y-5">
           <div>
             <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Task Title</label>
             <input type="text" value={title} onChange={e => setTitle(e.target.value)} autoFocus className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-inner" placeholder="e.g. Learn Excel Basics" />
@@ -1279,14 +1280,14 @@ export function HabitModal({ isOpen, onClose, onAdd, initialHabit, goals, defaul
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2.5rem] w-full max-w-md p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
-        <div className="flex items-center justify-between mb-8">
-          <h3 className="text-2xl font-black text-brand-text">{initialHabit ? "Edit Habit" : "Add New Habit"}</h3>
+      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialHabit ? "Edit Habit" : "Add New Habit"}</h3>
           <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>
-        <div className="space-y-5">
+        <div className="space-y-4 md:space-y-5">
           <div>
             <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Ritual Name</label>
             <input type="text" value={label} onChange={e => setLabel(e.target.value)} autoFocus className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-inner" placeholder="e.g. Read 10 Pages" />

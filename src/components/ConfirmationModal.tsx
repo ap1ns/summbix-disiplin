@@ -51,7 +51,7 @@ export default function ConfirmationModal({
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="relative bg-white border border-brand-primary/10 rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl overflow-hidden"
+          className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 max-w-md w-full shadow-2xl overflow-hidden"
         >
           <button onClick={onClose} className="absolute top-6 right-6 p-2 text-brand-text-light hover:text-brand-primary transition-colors">
             <X className="w-5 h-5" />

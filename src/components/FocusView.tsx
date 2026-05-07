@@ -399,7 +399,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
       </div>
 
       {/* Top Header - Minimalist */}
-      <header className="absolute top-0 left-0 right-0 p-10 flex items-start justify-between z-40">
+      <header className="absolute top-0 left-0 right-0 p-4 md:p-10 flex items-start justify-between z-40">
         <motion.button 
           whileHover={{ x: -5 }}
           onClick={onExit}
@@ -408,7 +408,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
           <div className="w-10 h-10 rounded-full bg-white/60 border border-brand-primary/10 flex items-center justify-center group-hover:bg-white transition-all backdrop-blur-md shadow-sm">
             <ChevronLeft className="w-5 h-5" />
           </div>
-          <span className="font-bold text-xs uppercase tracking-widest">Exit Sanctuary</span>
+          <span className="font-bold text-xs uppercase tracking-widest hidden md:inline">Exit Sanctuary</span>
         </motion.button>
 
         <div className="text-right flex flex-col items-end">
@@ -418,7 +418,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
               {focusTarget?.type === 'task' ? 'Mission Active' : focusTarget?.type === 'habit' ? 'Ritual Flow' : 'Deep Focus'}
             </span>
           </div>
-          <p className="text-xl font-medium text-brand-text tracking-wide max-w-[300px] truncate">
+          <p className="text-base md:text-xl font-medium text-brand-text tracking-wide max-w-[200px] md:max-w-[300px] truncate">
             {focusTarget?.title || goals.find(g => g.id === selectedGoalId)?.title || 'Undefined Flow'}
           </p>
         </div>
@@ -484,15 +484,15 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
       {/* Floating Control Dock */}
       {!isFinished && (
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
+        <div className="absolute bottom-6 md:bottom-12 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center w-full px-4 md:w-auto md:px-0">
           
 
 
           {/* Existing Floating Dock (Condensed) */}
-          <div className="bg-white/60 backdrop-blur-3xl border border-brand-primary/10 rounded-full px-4 py-3 flex items-center gap-2 shadow-[0_20px_50px_rgba(227,133,105,0.15)]">
+          <div className="bg-white/60 backdrop-blur-3xl border border-brand-primary/10 rounded-full px-3 md:px-4 py-2 md:py-3 flex items-center gap-1.5 md:gap-2 shadow-[0_20px_50px_rgba(227,133,105,0.15)] max-w-full overflow-x-auto scrollbar-hide">
             
             {/* Presets */}
-            <div className="flex items-center bg-brand-bg/50 rounded-full p-1 mr-4 border border-brand-primary/5">
+            <div className="hidden md:flex items-center bg-brand-bg/50 rounded-full p-1 mr-4 border border-brand-primary/5">
               {[25, 45, 60, 90].map(mins => (
                 <button
                   key={mins}
@@ -560,7 +560,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className="bg-white border border-brand-primary/10 rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl text-center"
+              className="bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 max-w-sm w-full shadow-2xl text-center"
             >
               <div className="w-20 h-20 rounded-3xl bg-brand-primary/10 flex items-center justify-center mx-auto mb-6">
                 <RefreshCcw className="w-10 h-10 text-brand-primary animate-spin-slow" />
@@ -602,7 +602,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="relative w-full h-[90vh] max-w-7xl bg-white rounded-[3.5rem] shadow-[0_30px_100px_rgba(255,142,158,0.15)] flex flex-col p-8 md:p-12 overflow-hidden border border-brand-primary/10"
+              className="relative w-full h-[90vh] max-w-7xl bg-white rounded-[2rem] md:rounded-[3.5rem] shadow-[0_30px_100px_rgba(255,142,158,0.15)] flex flex-col p-6 md:p-12 overflow-hidden border border-brand-primary/10"
             >
               {/* Header */}
               <header className="flex justify-end items-start mb-8 z-10">

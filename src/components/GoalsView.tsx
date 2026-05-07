@@ -47,12 +47,12 @@ export default function GoalsView({ goals, setGoals, tasks, habits, sessions }: 
   const isHabitDoneToday = (h: Habit) => h.completedDates?.includes(nowDateStrLocal) || false;
 
   return (
-    <div className="flex h-full w-full gap-8 pt-4">
+    <div className="flex flex-col lg:flex-row h-full w-full gap-6 md:gap-8 pt-4">
       {/* Left List of Goals */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-6 h-full">
+      <div className="w-full lg:w-1/3 flex flex-col gap-4 md:gap-6 lg:h-full">
         <div className="flex items-center justify-between shrink-0">
           <div>
-            <h2 className="text-3xl font-black tracking-tight text-brand-text">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-brand-text">
               Your Goals
             </h2>
             <p className="text-brand-text-light mt-1 font-medium text-sm uppercase tracking-widest">
@@ -61,7 +61,7 @@ export default function GoalsView({ goals, setGoals, tasks, habits, sessions }: 
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 -mx-4 space-y-4 pb-20">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-2 md:p-4 -mx-2 md:-mx-4 space-y-3 md:space-y-4 pb-8 lg:pb-20">
           {goals.map(goal => (
             <GoalListItem 
               key={goal.id} 
@@ -81,22 +81,22 @@ export default function GoalsView({ goals, setGoals, tasks, habits, sessions }: 
       </div>
 
       {/* Right Detail View */}
-      <div className="hidden lg:flex flex-1 bg-white border border-brand-primary/10 rounded-[3rem] shadow-2xl overflow-hidden relative">
+      <div className="flex flex-1 bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden relative min-h-[400px] lg:min-h-0">
         {selectedGoal ? (
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-10 lg:p-14">
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 lg:p-14">
             {/* Dynamic Ambient Background */}
             <div 
               className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] blur-[150px] rounded-full pointer-events-none opacity-10 transition-colors duration-1000" 
               style={{ backgroundColor: selectedGoal.color }} 
             />
 
-            <div className="relative z-10 flex items-start gap-8 mb-14">
-              <div className="w-24 h-24 rounded-[2.5rem] flex items-center justify-center shrink-0 shadow-2xl border-4 border-white transform -rotate-3" style={{ backgroundColor: selectedGoal.color }}>
-                <Target className="w-12 h-12 text-white" />
+            <div className="relative z-10 flex flex-col md:flex-row items-start gap-5 md:gap-8 mb-8 md:mb-14">
+              <div className="w-16 h-16 md:w-24 md:h-24 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center shrink-0 shadow-2xl border-4 border-white transform -rotate-3" style={{ backgroundColor: selectedGoal.color }}>
+                <Target className="w-8 h-8 md:w-12 md:h-12 text-white" />
               </div>
               <div className="flex-1">
-                <div className="flex items-start justify-between">
-                  <h1 className="text-5xl font-black text-brand-text tracking-tight mb-4">{selectedGoal.title}</h1>
+                <div className="flex flex-col md:flex-row items-start justify-between gap-3">
+                  <h1 className="text-3xl md:text-5xl font-black text-brand-text tracking-tight mb-2 md:mb-4">{selectedGoal.title}</h1>
                   <div className="flex items-center gap-3">
                     <button onClick={() => setIsEditModalOpen(true)} className="p-4 bg-brand-bg hover:bg-brand-primary hover:text-white rounded-2xl transition-all text-brand-text-light border border-brand-primary/5 shadow-sm">
                       <Pencil className="w-5 h-5" />
@@ -116,13 +116,13 @@ export default function GoalsView({ goals, setGoals, tasks, habits, sessions }: 
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-8 mb-14 relative z-10">
+            <div className="grid grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-14 relative z-10">
               <StatCard label="Overall Progress" value={`${selectedGoal.progress}%`} color={selectedGoal.color} />
               <StatCard label="Total Focus Time" value={`${focusHours}h ${focusMins}m`} color={selectedGoal.color} />
               <StatCard label="Completed Tasks" value={`${goalTasks.filter(t => t.completed).length} / ${goalTasks.length}`} color={selectedGoal.color} />
             </div>
 
-            <div className="grid grid-cols-2 gap-16 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative z-10">
               <div>
                 <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-brand-text border-b border-brand-primary/5 pb-5">
                   <CheckCircle2 className="w-6 h-6" style={{ color: selectedGoal.color }} /> Related Tasks
@@ -197,7 +197,7 @@ const GoalListItem: React.FC<GoalListItemProps> = ({ goal, isSelected, onClick }
     <div 
       onClick={onClick}
       className={cn(
-        "relative p-8 rounded-[2.5rem] cursor-pointer transition-all border overflow-hidden group mx-2",
+        "relative p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] cursor-pointer transition-all border overflow-hidden group mx-1 md:mx-2",
         isSelected ? "bg-white border-brand-primary/30 shadow-2xl ring-4 ring-brand-primary/5" : "bg-white/60 border-brand-primary/10 hover:border-brand-primary/20 hover:bg-white"
       )}
     >
