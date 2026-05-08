@@ -1,12 +1,96 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { LayoutDashboard, Calendar, Target, BarChart3, History, Timer, ListTodo, Repeat, User, MoreHorizontal, X, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { 
+  LayoutDashboard, Calendar, Target, BarChart3, History, Timer, 
+  ListTodo, Repeat, User, MoreHorizontal, X, Sparkles, Zap,
+  Globe, Wallet, Bell, Camera, Youtube, Coins, CircleDollarSign
+} from 'lucide-react';
 import { AppView } from '../types';
 import { cn } from '../lib/utils';
 
 interface SidebarProps {
   currentView: AppView;
   setView: (view: AppView) => void;
+}
+
+/**
+ * Magnetic Button Component
+ * Makes icons pull towards the cursor for a premium tactile feel
+ */
+function MagneticButton({ children, onClick, isActive, label }: { children: React.ReactNode, onClick: () => void, isActive: boolean, label?: string, key?: string }) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 15, stiffness: 150 };
+  const tx = useSpring(mouseX, springConfig);
+  const ty = useSpring(mouseY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - (rect.left + rect.width / 2);
+    const y = e.clientY - (rect.top + rect.height / 2);
+    mouseX.set(x * 0.4);
+    mouseY.set(y * 0.4);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  const handleTap = () => {
+    onClick();
+    // Subtle haptic vibration simulation
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate(5);
+    }
+  };
+
+  return (
+    <div className="relative group/mag">
+      <motion.button
+        style={{ x: tx, y: ty }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleTap}
+        whileTap={{ scale: 0.85, rotate: [0, -5, 5, 0] }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        className={cn(
+          "relative z-10 w-16 h-16 rounded-[2rem] flex items-center justify-center transition-all duration-300",
+          isActive ? "text-white" : "text-brand-text-light hover:text-brand-primary"
+        )}
+      >
+        <div className="relative z-20">{children}</div>
+        
+        {isActive && (
+          <motion.div
+            layoutId="desktop-active-blob"
+            className="absolute inset-0 bg-gradient-to-br from-brand-primary via-[#FF9E7D] to-brand-orange rounded-[2rem] shadow-[0_15px_35px_rgba(227,133,105,0.4)]"
+            transition={{ type: "spring", damping: 18, stiffness: 120 }}
+          >
+            <motion.div 
+              animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.1, 1] }}
+              transition={{ repeat: Infinity, duration: 4 }}
+              className="absolute inset-0 bg-white/20 blur-md rounded-[2rem]" 
+            />
+          </motion.div>
+        )}
+
+        <motion.div 
+          className="absolute inset-0 bg-brand-primary/5 rounded-[2rem] opacity-0 group-hover/mag:opacity-100 transition-opacity"
+        />
+      </motion.button>
+
+      {label && (
+        <div className="absolute left-[calc(100%+1.5rem)] top-1/2 -translate-y-1/2 opacity-0 -translate-x-4 group-hover/mag:opacity-100 group-hover/mag:translate-x-0 transition-all duration-300 pointer-events-none z-50">
+          <div className="bg-brand-text text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/10 whitespace-nowrap relative">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{label}</span>
+            <div className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-2 bg-brand-text rotate-45" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function Sidebar({ currentView, setView }: SidebarProps) {
@@ -52,97 +136,117 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
 
   return (
     <>
-      {/* ===== PREMIUM DESKTOP SIDEBAR ===== */}
+      {/* ===== HYPER-ANIMATED DESKTOP SIDEBAR ===== */}
       <div className="relative z-50 h-screen items-center pl-6 hidden md:flex">
-        <nav className="w-[94px] h-[96vh] bg-white/80 backdrop-blur-3xl rounded-[3.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.08)] flex flex-col py-10 items-center relative overflow-visible border border-white/40">
+        <motion.nav 
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="w-[100px] h-[96vh] bg-white/70 backdrop-blur-3xl rounded-[4rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] flex flex-col py-10 items-center relative overflow-visible border border-white/50"
+        >
+          {/* Neural Network Particles Decoration */}
+          <div className="absolute inset-0 overflow-hidden rounded-[4rem] pointer-events-none opacity-20">
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 90, 180, 270, 360],
+              }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute -top-20 -left-20 w-40 h-40 bg-brand-primary/20 blur-3xl rounded-full" 
+            />
+          </div>
           
-          {/* Logo Area with Neural Pulse */}
+          {/* Logo Area */}
           <div className="mb-14 relative z-10">
             <motion.div 
-              whileHover={{ rotate: 15, scale: 1.1 }}
-              className="w-18 h-18 rounded-[2.2rem] bg-gradient-to-br from-brand-primary to-brand-orange shadow-2xl flex items-center justify-center overflow-hidden p-4 group/logo relative"
+              whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+              transition={{ duration: 0.5 }}
+              onClick={() => setView('dashboard')}
+              className="w-18 h-18 rounded-[2.5rem] bg-gradient-to-br from-brand-primary via-[#FF9E7D] to-brand-orange shadow-2xl flex items-center justify-center overflow-hidden p-4 group/logo cursor-pointer"
             >
-              <div className="absolute inset-0 bg-white/20 animate-pulse" />
               <img src="/logo_putih.png" alt="Summbix" className="w-full h-full object-contain relative z-10" />
+              <motion.div 
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 bg-white/30"
+              />
             </motion.div>
-            <div className="mt-4 text-[9px] font-black tracking-[0.4em] text-brand-primary/40 uppercase text-center">Summbix</div>
+            <div className="mt-4 flex flex-col items-center gap-1">
+              <div className="w-1 h-1 rounded-full bg-brand-primary" />
+              <div className="text-[8px] font-black tracking-[0.5em] text-brand-primary uppercase">Core</div>
+            </div>
           </div>
 
-          {/* Nav Container */}
-          <div className="flex-1 w-full px-4 space-y-3 relative z-10 flex flex-col items-center overflow-y-auto scrollbar-hide py-2">
+          {/* Magnetic Nav Items */}
+          <div className="flex-1 w-full px-4 space-y-4 relative z-10 flex flex-col items-center overflow-y-auto scrollbar-hide py-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentView === item.id;
               
               return (
-                <div key={item.id} className="relative group/item">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setView(item.id as AppView)}
-                    className={cn(
-                      "relative z-10 w-16 h-16 rounded-[1.8rem] flex items-center justify-center transition-colors duration-500",
-                      isActive ? "text-white" : "text-brand-text-light hover:text-brand-primary hover:bg-brand-primary/5"
-                    )}
-                  >
-                    <Icon className={cn("w-6 h-6 relative z-20 transition-transform duration-500", isActive && "scale-110")} />
-                    
-                    {/* Liquid Active Indicator */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="desktop-active-blob"
-                        className="absolute inset-0 bg-gradient-to-br from-brand-primary to-brand-orange rounded-[1.8rem] shadow-[0_10px_25px_rgba(227,133,105,0.3)]"
-                        transition={{ type: "spring", damping: 18, stiffness: 120 }}
-                      >
-                        <motion.div 
-                          animate={{ opacity: [0.5, 0.8, 0.5], scale: [1, 1.05, 1] }}
-                          transition={{ repeat: Infinity, duration: 3 }}
-                          className="absolute inset-0 bg-white/20 blur-sm rounded-[1.8rem]" 
-                        />
-                      </motion.div>
-                    )}
-                  </motion.button>
-
-                  {/* Tooltip */}
-                  <div className="absolute left-[calc(100%+1.5rem)] top-1/2 -translate-y-1/2 opacity-0 -translate-x-4 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300 pointer-events-none z-50">
-                    <div className="bg-brand-text text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/10 whitespace-nowrap relative">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em]">{item.label}</span>
-                      <div className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-2 bg-brand-text rotate-45" />
-                    </div>
-                  </div>
-                </div>
+                <MagneticButton 
+                  key={item.id} 
+                  onClick={() => setView(item.id as AppView)} 
+                  isActive={isActive}
+                  label={item.label}
+                >
+                  <Icon className={cn("w-6 h-6 transition-all duration-500", isActive ? "scale-110 rotate-0" : "group-hover/mag:rotate-6")} />
+                </MagneticButton>
               );
             })}
           </div>
 
-          {/* Bottom Focus Hub */}
-          <div className="mt-auto mb-4 relative z-10 pt-6 border-t border-brand-primary/5 w-full flex justify-center">
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
+          {/* Focus Engine Hub */}
+          <div className="mt-auto mb-4 relative z-10 pt-8 border-t border-brand-primary/10 w-full flex flex-col items-center gap-4">
+             <div className="text-[7px] font-black text-brand-text-light/40 uppercase tracking-[0.4em]">Engine</div>
+             <motion.button
+              whileHover={{ scale: 1.15, rotate: 10 }}
+              whileTap={{ scale: 0.85 }}
               onClick={() => setView('focus')}
               className={cn(
-                "w-18 h-18 rounded-[2.2rem] flex items-center justify-center transition-all duration-500 border-2 relative group",
+                "w-18 h-18 rounded-[2.8rem] flex items-center justify-center transition-all duration-700 relative group overflow-hidden",
                 currentView === 'focus'
-                  ? "bg-brand-primary text-white border-brand-primary shadow-[0_15px_35px_rgba(227,133,105,0.4)]"
-                  : "bg-white border-brand-primary/20 text-brand-primary hover:border-brand-primary shadow-lg"
+                  ? "bg-brand-text text-white shadow-[0_20px_45px_rgba(0,0,0,0.3)]"
+                  : "bg-white border-2 border-brand-primary/20 text-brand-primary hover:border-brand-primary shadow-xl"
               )}
             >
-              <div className="absolute inset-0 rounded-[2.2rem] bg-gradient-to-br from-brand-primary to-brand-orange opacity-0 group-hover:opacity-10 transition-opacity" />
               <Timer className="w-8 h-8 relative z-10" />
-              {currentView === 'focus' && (
-                <motion.div 
-                  layoutId="focus-ring"
-                  className="absolute -inset-1.5 border-2 border-brand-primary/30 rounded-[2.5rem] animate-[ping_3s_infinite]" 
-                />
-              )}
+              <motion.div 
+                animate={currentView === 'focus' ? { opacity: [0.1, 0.3, 0.1] } : { opacity: 0 }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 bg-brand-primary"
+              />
+              
+              {/* Particle System for Focus Button */}
+              <AnimatePresence>
+                {currentView === 'focus' && (
+                  <>
+                    <motion.div 
+                      layoutId="focus-ring-ext"
+                      className="absolute -inset-2 border border-brand-primary/30 rounded-[3rem] animate-[ping_4s_infinite]" 
+                    />
+                    {[...Array(4)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        animate={{ 
+                          y: [-20, -60],
+                          x: [(i - 1.5) * 15, (i - 1.5) * 25],
+                          opacity: [0, 1, 0],
+                          scale: [0, 1, 0]
+                        }}
+                        transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+                        className="absolute w-1 h-1 bg-brand-primary rounded-full blur-[1px]"
+                      />
+                    ))}
+                  </>
+                )}
+              </AnimatePresence>
             </motion.button>
           </div>
-        </nav>
+        </motion.nav>
       </div>
 
-      {/* ===== ANIMATED MOBILE BOTTOM NAV ===== */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      {/* ===== THEMED HEXAGONAL MOBILE DOCK ===== */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden px-4 pb-6">
         <AnimatePresence>
           {isMoreOpen && (
             <>
@@ -154,44 +258,35 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                 className="fixed inset-0 z-10 bg-brand-text/40 backdrop-blur-md"
               />
               <motion.div
-                initial={{ y: '100%', opacity: 0 }}
+                initial={{ y: '110%', opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                exit={{ y: '100%', opacity: 0 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="fixed bottom-0 left-0 right-0 z-20 px-4 pb-[100px]"
+                exit={{ y: '110%', opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="fixed bottom-24 left-4 right-4 z-20"
               >
-                <div className="bg-white/90 backdrop-blur-3xl rounded-[2.5rem] border border-white shadow-[0_-20px_60px_rgba(0,0,0,0.15)] overflow-hidden">
-                  <div className="p-2 flex justify-center">
-                    <div className="w-12 h-1.5 bg-brand-primary/10 rounded-full" />
-                  </div>
-                  <div className="px-8 pt-2 pb-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Sparkles className="w-5 h-5 text-brand-primary" />
-                      <h3 className="text-xs font-black text-brand-text uppercase tracking-[0.2em]">Navigation Hub</h3>
-                    </div>
-                    <button onClick={() => setIsMoreOpen(false)} className="w-10 h-10 flex items-center justify-center bg-brand-bg rounded-full text-brand-text-light hover:text-brand-primary transition-all">
+                <div className="bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-[2.5rem] overflow-hidden p-6">
+                  <div className="flex items-center justify-between mb-6 px-2">
+                    <h3 className="text-xs font-black text-brand-primary uppercase tracking-[0.2em]">Modules</h3>
+                    <button onClick={() => setIsMoreOpen(false)} className="text-brand-text-light hover:text-brand-primary">
                       <X className="w-5 h-5" />
                     </button>
                   </div>
-                  <div className="grid grid-cols-4 gap-2 p-6 pt-2">
+                  <div className="grid grid-cols-3 gap-3">
                     {moreItems.map((item) => {
                       const Icon = item.icon;
                       const isActive = currentView === item.id;
                       return (
-                        <motion.button
+                        <button
                           key={item.id}
-                          whileTap={{ scale: 0.9 }}
                           onClick={() => handleMobileNav(item.id)}
                           className={cn(
-                            "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all",
+                            "flex flex-col items-center gap-2 p-4 rounded-3xl transition-all",
                             isActive ? "bg-brand-primary/10 text-brand-primary" : "text-brand-text-light hover:bg-brand-bg"
                           )}
                         >
-                          <div className={cn("p-3 rounded-xl transition-all", isActive ? "bg-white shadow-md scale-110" : "bg-transparent")}>
-                            <Icon className="w-5 h-5" />
-                          </div>
+                          <Icon className="w-6 h-6" />
                           <span className="text-[9px] font-bold uppercase tracking-wider">{item.label}</span>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
@@ -201,76 +296,69 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
           )}
         </AnimatePresence>
 
-        {/* Floating Dock Bar */}
-        <div className="px-4 pb-4">
-          <div className="bg-white/80 backdrop-blur-2xl rounded-[2.8rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white h-[84px] relative flex items-center justify-around px-2">
-            {mobileNavPrimary.map((item) => {
-              const Icon = item.icon;
-              const isActive = item.isMore ? isMoreActive : currentView === item.id;
-              const isFocus = !!item.isFocus;
-              const isMore = !!item.isMore;
+        <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white h-[85px] flex items-center justify-around relative px-2">
+          {mobileNavPrimary.map((item) => {
+            const Icon = item.icon;
+            const isActive = item.isMore ? isMoreActive : currentView === item.id;
+            const isFocus = !!item.isFocus;
 
+            if (isFocus) {
               return (
-                <button
-                  key={item.id}
-                  onClick={() => handleMobileNav(item.id)}
-                  className="relative flex flex-col items-center justify-center w-14 h-full group"
-                >
-                  {/* Fluid Background Indicator */}
-                  {isActive && !isFocus && (
-                    <motion.div
-                      layoutId="mobile-active-blob"
-                      className="absolute inset-x-1 inset-y-3 bg-brand-primary/10 rounded-[1.8rem]"
-                      transition={{ type: "spring", damping: 20, stiffness: 150 }}
+                <div key={item.id} className="relative -mt-10">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setView('focus')}
+                    className="w-[75px] h-[85px] flex items-center justify-center relative z-20"
+                    style={{
+                      filter: 'drop-shadow(0 12px 20px rgba(255, 142, 158, 0.4))'
+                    }}
+                  >
+                    <div 
+                      className={cn(
+                        "absolute inset-0 transition-colors duration-500",
+                        currentView === 'focus' ? "bg-brand-text" : "bg-brand-primary"
+                      )}
+                      style={{
+                        clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+                      }}
                     />
-                  )}
-
-                  <div className={cn(
-                    "relative z-10 flex flex-col items-center gap-1 transition-all duration-300",
-                    isActive && !isFocus ? "scale-110" : "scale-100",
-                    isFocus ? "-mt-10" : ""
-                  )}>
-                    {isFocus ? (
+                    <Timer className="w-8 h-8 text-white relative z-10" />
+                    {currentView === 'focus' && (
                       <motion.div 
-                        whileTap={{ scale: 0.9 }}
-                        className={cn(
-                          "w-18 h-18 rounded-[2.2rem] flex items-center justify-center border-4 border-white shadow-[0_15px_40px_rgba(227,133,105,0.4)] transition-all",
-                          currentView === 'focus' ? "bg-brand-primary text-white" : "bg-white text-brand-primary"
-                        )}
-                      >
-                        <Timer className="w-8 h-8" />
-                        {currentView === 'focus' && (
-                           <motion.div 
-                            layoutId="mobile-focus-glow"
-                            className="absolute -inset-1 bg-brand-primary/20 blur-md rounded-full -z-10" 
-                           />
-                        )}
-                      </motion.div>
-                    ) : (
-                      <>
-                        <Icon className={cn(
-                          "w-6 h-6 transition-colors duration-300",
-                          isActive ? "text-brand-primary" : "text-brand-text-light"
-                        )} />
-                        <span className={cn(
-                          "text-[9px] font-black uppercase tracking-wider leading-none",
-                          isActive ? "text-brand-primary" : "text-brand-text-light opacity-60"
-                        )}>
-                          {item.label}
-                        </span>
-                        {isActive && (
-                          <motion.div 
-                            layoutId="mobile-dot"
-                            className="w-1.5 h-1.5 rounded-full bg-brand-primary absolute -bottom-3" 
-                          />
-                        )}
-                      </>
+                        layoutId="mobile-focus-glow"
+                        animate={{ opacity: [0.5, 0.8, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute inset-0 bg-white/20"
+                        style={{
+                          clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+                        }}
+                      />
                     )}
-                  </div>
-                </button>
+                  </motion.button>
+                </div>
               );
-            })}
-          </div>
+            }
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleMobileNav(item.id)}
+                className={cn(
+                  "relative flex flex-col items-center justify-center w-14 h-full transition-all duration-300",
+                  isActive ? "text-brand-primary" : "text-brand-text-light opacity-60"
+                )}
+              >
+                <Icon className={cn("w-6 h-6 mb-1 transition-transform", isActive && "scale-110 -translate-y-1")} />
+                <span className="text-[8px] font-black uppercase tracking-widest">{item.label}</span>
+                {isActive && (
+                  <motion.div 
+                    layoutId="mobile-dot"
+                    className="absolute bottom-3 w-1 h-1 rounded-full bg-brand-primary"
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
       </nav>
     </>

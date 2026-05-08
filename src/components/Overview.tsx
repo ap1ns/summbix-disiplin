@@ -366,27 +366,33 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
         
         {/* Daily Stats Summary */}
         <section className="grid grid-cols-3 gap-3 md:gap-4">
-          <StatCard 
-            label="Focus Hours" 
-            value={`${focusHours}h ${focusMins}m`} 
-            sub={focusSecondsToday > 0 ? "Active today" : "No focus yet"} 
-            icon={<Clock className="w-5 h-5 text-brand-orange" />}
-            color="orange"
-          />
-          <StatCard 
-            label="Daily Progress" 
-            value={`${dailyProgressPercent}%`} 
-            sub={`${completedDailyItems} of ${totalDailyItems} tasks & habits done`} 
-            icon={<CheckCircle2 className="w-5 h-5 text-brand-green" />}
-            color="green"
-          />
-          <StatCard 
-            label="Current Streak" 
-            value={`${currentStreak} Days`} 
-            sub={`Personal best: ${currentStreak > 0 ? currentStreak : 0}`} 
-            icon={<Flame className="w-5 h-5 text-brand-red" />}
-            color="red"
-          />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <StatCard 
+              label="Focus Hours" 
+              value={`${focusHours}h ${focusMins}m`} 
+              sub={focusSecondsToday > 0 ? "Active today" : "No focus yet"} 
+              icon={<Clock className="w-5 h-5 text-brand-orange" />}
+              color="orange"
+            />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <StatCard 
+              label="Daily Progress" 
+              value={`${dailyProgressPercent}%`} 
+              sub={`${completedDailyItems} of ${totalDailyItems} tasks & habits done`} 
+              icon={<CheckCircle2 className="w-5 h-5 text-brand-green" />}
+              color="green"
+            />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+            <StatCard 
+              label="Current Streak" 
+              value={`${currentStreak} Days`} 
+              sub={`Personal best: ${currentStreak > 0 ? currentStreak : 0}`} 
+              icon={<Flame className="w-5 h-5 text-brand-red" />}
+              color="red"
+            />
+          </motion.div>
         </section>
 
         {/* Goals Section */}
@@ -413,17 +419,26 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
             </motion.button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {goals.slice(0, 3).map((goal) => (
-              <GoalCard 
-                key={goal.id} 
-                goal={goal} 
-                isSelected={selectedGoalId === goal.id}
-                onSelect={(id) => setSelectedGoalId(selectedGoalId === id ? null : id)}
-                onEdit={() => { setEditingGoal(goal); setIsGoalModalOpen(true); }}
-                onDelete={() => handleDeleteGoal(goal.id)}
-              />
+            {goals.slice(0, 3).map((goal, idx) => (
+              <motion.div 
+                key={goal.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 + (idx * 0.1) }}
+              >
+                <GoalCard 
+                  goal={goal} 
+                  isSelected={selectedGoalId === goal.id}
+                  onSelect={(id) => setSelectedGoalId(selectedGoalId === id ? null : id)}
+                  onEdit={() => { setEditingGoal(goal); setIsGoalModalOpen(true); }}
+                  onDelete={() => handleDeleteGoal(goal.id)}
+                />
+              </motion.div>
             ))}
-            <button 
+            <motion.button 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.7 }}
               onClick={() => setIsGoalModalOpen(true)}
               className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-brand-primary/20 rounded-[2rem] hover:border-brand-primary/40 hover:bg-white transition-all group min-h-[180px] shadow-sm"
             >
@@ -431,7 +446,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
                 <Plus className="w-7 h-7 text-brand-text-light group-hover:text-brand-primary" />
               </div>
               <span className="text-[10px] font-black text-brand-text-light group-hover:text-brand-text uppercase tracking-[0.2em]">Launch New Mission</span>
-            </button>
+            </motion.button>
           </div>
         </section>
 

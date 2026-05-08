@@ -332,9 +332,26 @@ export default function App() {
                 onLogout={handleLogout}
               />
 
-              {/* Background Decorative Elements */}
-              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-blue/5 blur-[120px] rounded-full pointer-events-none -z-10" />
-              <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-orange/5 blur-[100px] rounded-full pointer-events-none -z-10" />
+              {/* Dynamic Neural Background */}
+              <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+                <motion.div 
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    rotate: [0, 90, 180, 270, 360],
+                  }}
+                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                  className="absolute -top-[20%] -right-[10%] w-[80%] h-[80%] bg-brand-primary/5 blur-[120px] rounded-full" 
+                />
+                <motion.div 
+                  animate={{ 
+                    scale: [1.2, 1, 1.2],
+                    rotate: [360, 270, 180, 90, 0],
+                  }}
+                  transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                  className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[70%] bg-brand-blue/5 blur-[100px] rounded-full" 
+                />
+                <div className="absolute inset-0 bg-grain opacity-20" />
+              </div>
               
               <AnimatePresence mode="wait">
                 <motion.div
