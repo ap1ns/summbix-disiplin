@@ -27,7 +27,7 @@ const LoadingOverlay = ({ status }: { status: string }) => (
           animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="absolute inset-0 border-4 border-t-brand-primary rounded-full"
         />
-        <Shield className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-brand-primary" />
+        <img src="/logo_hitam.png" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 object-contain" alt="Summbix" />
       </div>
       <div className="text-center space-y-2">
         <h3 className="text-xl font-black text-brand-text uppercase tracking-widest">{status}</h3>
@@ -39,8 +39,8 @@ const LoadingOverlay = ({ status }: { status: string }) => (
 
 const ErrorDisplay = ({ message }: { message: string }) => (
   <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-red-50 border border-red-100 rounded-xl p-3 flex items-center gap-3">
-    <div className="w-6 h-6 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
-      <Shield className="w-3 h-3 text-red-500" />
+    <div className="w-6 h-6 rounded-lg bg-red-100 flex items-center justify-center shrink-0 p-1">
+      <img src="/logo_hitam.png" className="w-full h-full object-contain grayscale" alt="Error" />
     </div>
     <p className="text-[10px] font-black uppercase tracking-widest text-red-500 leading-tight">{message}</p>
   </motion.div>
@@ -158,18 +158,18 @@ export default function Login({ onLogin }: LoginProps) {
           <motion.div 
             animate={{ 
               scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1]
+              opacity: [0.2, 0.4, 0.2]
             }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-1/4 -right-1/4 w-[80%] h-[80%] bg-black blur-[120px] rounded-full" 
+            className="absolute -top-1/4 -right-1/4 w-[80%] h-[80%] bg-brand-primary/20 blur-[120px] rounded-full" 
           />
           <motion.div 
             animate={{ 
               scale: [1, 1.3, 1],
-              opacity: [0.05, 0.15, 0.05]
+              opacity: [0.1, 0.3, 0.1]
             }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-1/4 -left-1/4 w-[70%] h-[70%] bg-black blur-[100px] rounded-full" 
+            className="absolute -bottom-1/4 -left-1/4 w-[70%] h-[70%] bg-brand-orange/20 blur-[100px] rounded-full" 
           />
         </div>
 
@@ -281,7 +281,7 @@ export default function Login({ onLogin }: LoginProps) {
                   <AnimatePresence>
                     {error && (
                       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-red-50 border border-red-100 rounded-xl p-3 flex items-center gap-3">
-                        <Shield className="w-3 h-3 text-red-500" />
+                        <img src="/logo_hitam.png" className="w-3 h-3 grayscale opacity-50" alt="Error" />
                         <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">{error}</p>
                       </motion.div>
                     )}
@@ -443,7 +443,7 @@ export default function Login({ onLogin }: LoginProps) {
           {/* Footer info */}
           <div className="mt-auto md:mt-12 pt-8 flex items-center justify-center gap-6 opacity-40 select-none pointer-events-none">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-brand-primary" />
+              <img src="/logo_hitam.png" className="w-4 h-4 object-contain opacity-60" alt="Secure" />
               <span className="text-[9px] font-black uppercase tracking-widest text-brand-text">End-to-End Secure</span>
             </div>
             <div className="w-1 h-1 bg-brand-text-light rounded-full" />
@@ -490,9 +490,9 @@ export default function Login({ onLogin }: LoginProps) {
                 <motion.div 
                   initial={false}
                   animate={{ rotate: isLogin ? 0 : 180 }}
-                  className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center"
+                  className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center p-5"
                 >
-                  <ShieldCheck className="w-10 h-10" />
+                  <img src="/logo_putih.png" className="w-full h-full object-contain" alt="Summbix" />
                 </motion.div>
                 
                 <div className="space-y-4">

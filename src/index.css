@@ -6,17 +6,17 @@
   --font-body: "Quicksand", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-brand-primary: #000000; 
-  --color-brand-bg: #F8F8F8; 
+  --color-brand-primary: #8E5E4E; 
+  --color-brand-bg: #FAF9F6; 
   --color-brand-content: #FFFFFF;
-  --color-brand-text: #111111; 
-  --color-brand-text-light: #777777;
+  --color-brand-text: #2D2926; 
+  --color-brand-text-light: #7A746E;
   
-  --color-brand-green: #222222; 
-  --color-brand-red: #444444; 
-  --color-brand-orange: #333333; 
-  --color-brand-blue: #555555; 
-  --color-brand-pink: #222222;
+  --color-brand-green: #4A5D4E; 
+  --color-brand-red: #8B4513; 
+  --color-brand-orange: #E38569; 
+  --color-brand-blue: #4682B4; 
+  --color-brand-pink: #A67C52;
   
   --radius-xl: 1.5rem;
   --radius-2xl: 2.5rem;
@@ -51,11 +51,11 @@
   border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(142, 94, 78, 0.2);
   border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(142, 94, 78, 0.4);
 }
 .bg-grain {
   /* Removed position: relative to avoid overriding utilities */
@@ -75,7 +75,7 @@
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-[#444444];
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary via-[#E38569] to-brand-orange;
 }
 
 @layer utilities {

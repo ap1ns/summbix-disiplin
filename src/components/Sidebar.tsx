@@ -310,13 +310,13 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                     onClick={() => setView('focus')}
                     className="w-[75px] h-[85px] flex items-center justify-center relative z-20"
                     style={{
-                      filter: 'drop-shadow(0 12px 20px rgba(255, 142, 158, 0.4))'
+                      filter: 'drop-shadow(0 12px 20px rgba(142, 94, 78, 0.4))'
                     }}
                   >
                     <div 
                       className={cn(
                         "absolute inset-0 transition-colors duration-500",
-                        currentView === 'focus' ? "bg-brand-text" : "bg-brand-primary"
+                        currentView === 'focus' ? "bg-brand-text" : "bg-gradient-to-br from-brand-primary via-[#E38569] to-brand-orange"
                       )}
                       style={{
                         clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
@@ -352,8 +352,14 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                 <span className="text-[8px] font-black uppercase tracking-widest">{item.label}</span>
                 {isActive && (
                   <motion.div 
+                    layoutId="mobile-active-bg"
+                    className="absolute inset-0 bg-brand-primary/10 rounded-3xl -z-10"
+                  />
+                )}
+                {isActive && (
+                  <motion.div 
                     layoutId="mobile-dot"
-                    className="absolute bottom-3 w-1 h-1 rounded-full bg-brand-primary"
+                    className="absolute bottom-2 w-1 h-1 rounded-full bg-brand-primary"
                   />
                 )}
               </button>
