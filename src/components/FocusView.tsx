@@ -413,7 +413,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
         <div className="text-right flex flex-col items-end">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse shadow-[0_0_10px_rgba(227,133,105,0.4)]" />
+            <div className="w-2 h-2 rounded-full bg-brand-primary shadow-[0_0_10px_rgba(142,94,78,0.3)]" />
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary">
               {focusTarget?.type === 'task' ? 'Mission Active' : focusTarget?.type === 'habit' ? 'Ritual Flow' : 'Deep Focus'}
             </span>
@@ -611,10 +611,10 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                 </div>
               </header>
 
-              <div className="flex-1 flex flex-col md:flex-row items-center gap-0 relative h-full">
+              <div className="flex-1 flex flex-col md:flex-row items-center gap-8 md:gap-0 relative h-full overflow-y-auto md:overflow-hidden py-4 md:py-0 custom-scrollbar">
                 
-                {/* Left: Vinyl Record with Dynamic Center Image */}
-                <div className="absolute -left-[45%] md:-left-[40%] lg:-left-[35%] top-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[650px] md:h-[650px] lg:w-[850px] lg:h-[850px] flex-shrink-0">
+                {/* Vinyl Record Section */}
+                <div className="relative md:absolute md:-left-[40%] lg:-left-[35%] md:top-1/2 md:-translate-y-1/2 w-[260px] h-[260px] md:w-[650px] md:h-[650px] lg:w-[850px] lg:h-[850px] flex-shrink-0 z-10">
                   
                   {/* The Vinyl Disk (Inertia-driven Rotation) */}
                   <motion.div 
@@ -680,20 +680,20 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                   </motion.div>
                 </div>
 
-                {/* Right: Typography and Tracklist */}
-                <div className="flex-1 w-full flex justify-center items-center h-full ml-auto md:ml-[45%] lg:ml-[38%]">
-                  <div className="w-full max-w-xl pr-4 md:pr-12">
+                {/* Typography and Tracklist Section */}
+                <div className="flex-1 w-full flex justify-center items-center h-full md:ml-[45%] lg:ml-[38%] z-20">
+                  <div className="w-full max-w-xl px-4 md:pr-12 text-center md:text-left">
                     <div className="mb-6 md:mb-10 flex items-end justify-between gap-8">
                       <div>
                         <motion.h2 
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="text-[10vw] md:text-[7vw] lg:text-[7.5vw] font-black leading-[0.8] tracking-[-0.06em] uppercase text-brand-text mb-6 flex flex-col"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-[12vw] md:text-[7vw] lg:text-[7.5vw] font-black leading-[0.8] tracking-[-0.06em] uppercase text-brand-text mb-6 flex flex-col"
                         >
                            <span>SELECT</span>
                            <span>SOUND</span>
                         </motion.h2>
-                        <p className="text-[9px] md:text-[11px] font-bold uppercase tracking-[0.4em] text-brand-text/40">
+                        <p className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.4em] text-brand-text/40">
                            {selectedSoundscape?.type || 'AMBIENT, FOCUS, ATMOSPHERIC'}
                         </p>
                       </div>

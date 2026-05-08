@@ -181,7 +181,7 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
           >
             <Bell className="w-5 h-5 md:w-6 md:h-6" />
             {unreadCount > 0 && (
-              <span className="absolute top-2 right-2 md:top-3.5 md:right-3.5 w-2 h-2 md:w-2.5 md:h-2.5 bg-white rounded-full border-2 border-brand-primary shadow-sm animate-pulse" />
+              <span className="absolute top-2 right-2 md:top-3.5 md:right-3.5 w-2 h-2 md:w-2.5 md:h-2.5 bg-white rounded-full border-2 border-brand-primary shadow-sm" />
             )}
           </button>
 
@@ -238,7 +238,7 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
         <div className="relative hidden md:block">
           <button 
             onClick={() => onNavigate('profile')}
-            className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-orange p-[2px] hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-xl shadow-brand-primary/20"
+            className="w-14 h-14 rounded-2xl bg-brand-primary p-[2px] hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-xl shadow-brand-primary/20"
           >
             <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center overflow-hidden">
                <img 

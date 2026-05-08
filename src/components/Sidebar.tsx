@@ -65,14 +65,10 @@ function MagneticButton({ children, onClick, isActive, label }: { children: Reac
         {isActive && (
           <motion.div
             layoutId="desktop-active-blob"
-            className="absolute inset-0 bg-gradient-to-br from-brand-primary via-[#FF9E7D] to-brand-orange rounded-[2rem] shadow-[0_15px_35px_rgba(227,133,105,0.4)]"
+            className="absolute inset-0 bg-brand-primary rounded-[2rem] shadow-[0_15px_35px_rgba(142,94,78,0.3)]"
             transition={{ type: "spring", damping: 18, stiffness: 120 }}
           >
-            <motion.div 
-              animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 4 }}
-              className="absolute inset-0 bg-white/20 blur-md rounded-[2rem]" 
-            />
+            <div className="absolute inset-0 bg-white/20 blur-md rounded-[2rem]" />
           </motion.div>
         )}
 
@@ -161,14 +157,10 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
               whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
               transition={{ duration: 0.5 }}
               onClick={() => setView('dashboard')}
-              className="w-18 h-18 rounded-[2.5rem] bg-gradient-to-br from-brand-primary via-[#FF9E7D] to-brand-orange shadow-2xl flex items-center justify-center overflow-hidden p-4 group/logo cursor-pointer"
+              className="w-18 h-18 rounded-[2.5rem] bg-brand-primary shadow-2xl flex items-center justify-center overflow-hidden p-4 group/logo cursor-pointer"
             >
               <img src="/logo_putih.png" alt="Summbix" className="w-full h-full object-contain relative z-10" />
-              <motion.div 
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute inset-0 bg-white/30"
-              />
+              <div className="absolute inset-0 bg-white/30 opacity-0" />
             </motion.div>
             <div className="mt-4 flex flex-col items-center gap-1">
               <div className="w-1 h-1 rounded-full bg-brand-primary" />
@@ -210,11 +202,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
               )}
             >
               <Timer className="w-8 h-8 relative z-10" />
-              <motion.div 
-                animate={currentView === 'focus' ? { opacity: [0.1, 0.3, 0.1] } : { opacity: 0 }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute inset-0 bg-brand-primary"
-              />
+              <div className="absolute inset-0 bg-brand-primary opacity-0" />
               
               {/* Particle System for Focus Button */}
               <AnimatePresence>
@@ -316,24 +304,19 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                     <div 
                       className={cn(
                         "absolute inset-0 transition-colors duration-500",
-                        currentView === 'focus' ? "bg-brand-text" : "bg-gradient-to-br from-brand-primary via-[#E38569] to-brand-orange"
+                        currentView === 'focus' ? "bg-brand-text" : "bg-brand-primary"
                       )}
                       style={{
                         clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
                       }}
                     />
                     <Timer className="w-8 h-8 text-white relative z-10" />
-                    {currentView === 'focus' && (
-                      <motion.div 
-                        layoutId="mobile-focus-glow"
-                        animate={{ opacity: [0.5, 0.8, 0.5] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute inset-0 bg-white/20"
+                      <div 
+                        className="absolute inset-0 bg-white/20 opacity-0"
                         style={{
                           clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
                         }}
                       />
-                    )}
                   </motion.button>
                 </div>
               );

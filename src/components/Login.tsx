@@ -304,7 +304,7 @@ export default function Login({ onLogin }: LoginProps) {
                       </span>
                     </motion.button>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-3">
                       <motion.button
                         whileTap={{ scale: 0.95 }}
                         type="button" onClick={() => onLogin("Guest User", true)}
@@ -318,6 +318,13 @@ export default function Login({ onLogin }: LoginProps) {
                         className="bg-white/60 backdrop-blur-md border border-white text-brand-text/60 py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-white transition-all"
                       >
                         Google
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        type="button" onClick={handleDevLogin}
+                        className="bg-brand-primary/10 backdrop-blur-md border border-brand-primary/20 text-brand-primary py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-brand-primary/20 transition-all flex items-center justify-center gap-1"
+                      >
+                        <Zap className="w-3 h-3" /> Dev
                       </motion.button>
                     </div>
                   </div>
@@ -624,13 +631,23 @@ export default function Login({ onLogin }: LoginProps) {
                     <div className="h-px flex-1 bg-brand-primary/10" />
                   </div>
 
-                  <button 
-                    type="button" 
-                    onClick={() => onLogin("Guest User", true)}
-                    className="w-full bg-white border border-brand-primary/10 text-brand-text py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-bg transition-all flex items-center justify-center gap-2"
-                  >
-                    <User className="w-3 h-3" /> Explore as Guest
-                  </button>
+                  <div className="space-y-3">
+                    <button 
+                      type="button" 
+                      onClick={() => onLogin("Guest User", true)}
+                      className="w-full bg-white border border-brand-primary/10 text-brand-text py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-bg transition-all flex items-center justify-center gap-2"
+                    >
+                      <User className="w-3 h-3" /> Explore as Guest
+                    </button>
+
+                    <button 
+                      type="button" 
+                      onClick={handleDevLogin}
+                      className="w-full bg-brand-primary/5 border border-brand-primary/20 text-brand-primary py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary/10 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Zap className="w-3 h-3" /> Bypass Authentication (Dev Mode)
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
