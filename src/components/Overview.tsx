@@ -1108,9 +1108,9 @@ export function GoalModal({ isOpen, onClose, onAdd, initialGoal }: { isOpen: boo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialGoal ? "Edit Mission" : "Launch New Mission"}</h3>
           <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
@@ -1198,9 +1198,9 @@ export function TaskModal({ isOpen, onClose, onAdd, initialTask, goals, defaultG
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialTask ? "Edit Task" : "Add New Task"}</h3>
           <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
@@ -1293,9 +1293,9 @@ export function HabitModal({ isOpen, onClose, onAdd, initialHabit, goals, defaul
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar">
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialHabit ? "Edit Habit" : "Add New Habit"}</h3>
           <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
