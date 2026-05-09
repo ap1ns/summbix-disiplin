@@ -11,9 +11,10 @@ interface ProfileViewProps {
   setProfile: (p: UserProfile) => void;
   isGuest: boolean;
   onLogout: () => void;
+  onResetData?: () => Promise<void>;
 }
 
-export function ProfileView({ profile, setProfile, isGuest, onLogout }: ProfileViewProps) {
+export function ProfileView({ profile, setProfile, isGuest, onLogout, onResetData }: ProfileViewProps) {
   const [name, setName] = useState(profile.name);
   const [bio, setBio] = useState(profile.bio);
   const [avatar, setAvatar] = useState(profile.avatar);

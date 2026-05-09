@@ -36,6 +36,25 @@ router.patch('/:id/read', async (req: AuthRequest, res: Response) => {
   }
 });
 
+// CREATE
+router.post('/', async (req: AuthRequest, res: Response) => {
+  try {
+    const { title, message, type } = req.body;
+    const notification = await prisma.notification.create({
+      data: {
+        userId: req.userId!,
+        title,
+        message,
+        type: type || 'system',
+        read: false,
+      },
+    });
+    res.status(201).json(notification);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create notification' });
+  }
+});
+
 // MARK ALL AS READ
 router.patch('/read-all', async (req: AuthRequest, res: Response) => {
   try {

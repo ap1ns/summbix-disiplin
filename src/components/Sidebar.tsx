@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { 
-  LayoutDashboard, Calendar, Target, BarChart3, History, Timer, 
+import {
+  LayoutDashboard, Calendar, Target, BarChart3, History, Timer,
   ListTodo, Repeat, User, MoreHorizontal, X, Sparkles, Zap,
   Globe, Wallet, Bell, Camera, Youtube, Coins, CircleDollarSign
 } from 'lucide-react';
@@ -61,7 +61,7 @@ function MagneticButton({ children, onClick, isActive, label }: { children: Reac
         )}
       >
         <div className="relative z-20">{children}</div>
-        
+
         {isActive && (
           <motion.div
             layoutId="desktop-active-blob"
@@ -72,7 +72,7 @@ function MagneticButton({ children, onClick, isActive, label }: { children: Reac
           </motion.div>
         )}
 
-        <motion.div 
+        <motion.div
           className="absolute inset-0 bg-brand-primary/5 rounded-[2rem] opacity-0 group-hover/mag:opacity-100 transition-opacity"
         />
       </motion.button>
@@ -134,26 +134,26 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
     <>
       {/* ===== HYPER-ANIMATED DESKTOP SIDEBAR ===== */}
       <div className="relative z-50 h-screen items-center pl-6 hidden md:flex">
-        <motion.nav 
+        <motion.nav
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           className="w-[100px] h-[96vh] bg-white/70 backdrop-blur-3xl rounded-[4rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] flex flex-col py-10 items-center relative overflow-visible border border-white/50"
         >
           {/* Neural Network Particles Decoration */}
           <div className="absolute inset-0 overflow-hidden rounded-[4rem] pointer-events-none opacity-20">
-            <motion.div 
-              animate={{ 
+            <motion.div
+              animate={{
                 scale: [1, 1.2, 1],
                 rotate: [0, 90, 180, 270, 360],
               }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-20 -left-20 w-40 h-40 bg-brand-primary/20 blur-3xl rounded-full" 
+              className="absolute -top-20 -left-20 w-40 h-40 bg-brand-primary/20 blur-3xl rounded-full"
             />
           </div>
-          
+
           {/* Logo Area */}
           <div className="mb-14 relative z-10">
-            <motion.div 
+            <motion.div
               whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
               transition={{ duration: 0.5 }}
               onClick={() => setView('dashboard')}
@@ -163,8 +163,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
               <div className="absolute inset-0 bg-white/30 opacity-0" />
             </motion.div>
             <div className="mt-4 flex flex-col items-center gap-1">
-              <div className="w-1 h-1 rounded-full bg-brand-primary" />
-              <div className="text-[8px] font-black tracking-[0.5em] text-brand-primary uppercase">Core</div>
+              <div className="text-[8px] font-black tracking-[0.5em] text-brand-primary uppercase">SUMMBIX</div>
             </div>
           </div>
 
@@ -173,11 +172,11 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentView === item.id;
-              
+
               return (
-                <MagneticButton 
-                  key={item.id} 
-                  onClick={() => setView(item.id as AppView)} 
+                <MagneticButton
+                  key={item.id}
+                  onClick={() => setView(item.id as AppView)}
                   isActive={isActive}
                   label={item.label}
                 >
@@ -189,8 +188,8 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
 
           {/* Focus Engine Hub */}
           <div className="mt-auto mb-4 relative z-10 pt-8 border-t border-brand-primary/10 w-full flex flex-col items-center gap-4">
-             <div className="text-[7px] font-black text-brand-text-light/40 uppercase tracking-[0.4em]">Engine</div>
-             <motion.button
+            <div className="text-[7px] font-black text-brand-text-light/40 uppercase tracking-[0.4em]">Engine</div>
+            <motion.button
               whileHover={{ scale: 1.15, rotate: 10 }}
               whileTap={{ scale: 0.85 }}
               onClick={() => setView('focus')}
@@ -203,19 +202,19 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
             >
               <Timer className="w-8 h-8 relative z-10" />
               <div className="absolute inset-0 bg-brand-primary opacity-0" />
-              
+
               {/* Particle System for Focus Button */}
               <AnimatePresence>
                 {currentView === 'focus' && (
                   <>
-                    <motion.div 
+                    <motion.div
                       layoutId="focus-ring-ext"
-                      className="absolute -inset-2 border border-brand-primary/30 rounded-[3rem] animate-[ping_4s_infinite]" 
+                      className="absolute -inset-2 border border-brand-primary/30 rounded-[3rem] animate-[ping_4s_infinite]"
                     />
                     {[...Array(4)].map((_, i) => (
                       <motion.div
                         key={i}
-                        animate={{ 
+                        animate={{
                           y: [-20, -60],
                           x: [(i - 1.5) * 15, (i - 1.5) * 25],
                           opacity: [0, 1, 0],
@@ -301,7 +300,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                       filter: 'drop-shadow(0 12px 20px rgba(142, 94, 78, 0.4))'
                     }}
                   >
-                    <div 
+                    <div
                       className={cn(
                         "absolute inset-0 transition-colors duration-500",
                         currentView === 'focus' ? "bg-brand-text" : "bg-brand-primary"
@@ -311,12 +310,12 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                       }}
                     />
                     <Timer className="w-8 h-8 text-white relative z-10" />
-                      <div 
-                        className="absolute inset-0 bg-white/20 opacity-0"
-                        style={{
-                          clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
-                        }}
-                      />
+                    <div
+                      className="absolute inset-0 bg-white/20 opacity-0"
+                      style={{
+                        clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+                      }}
+                    />
                   </motion.button>
                 </div>
               );
@@ -334,13 +333,13 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                 <Icon className={cn("w-6 h-6 mb-1 transition-transform", isActive && "scale-110 -translate-y-1")} />
                 <span className="text-[8px] font-black uppercase tracking-widest">{item.label}</span>
                 {isActive && (
-                  <motion.div 
+                  <motion.div
                     layoutId="mobile-active-bg"
                     className="absolute inset-0 bg-brand-primary/10 rounded-3xl -z-10"
                   />
                 )}
                 {isActive && (
-                  <motion.div 
+                  <motion.div
                     layoutId="mobile-dot"
                     className="absolute bottom-2 w-1 h-1 rounded-full bg-brand-primary"
                   />

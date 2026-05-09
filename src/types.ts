@@ -58,6 +58,7 @@ export interface Notification {
   time: string;
   read: boolean;
   type: 'task' | 'goal' | 'habit' | 'system';
+  createdAt?: string;
 }
 
 export interface Soundscape {

@@ -307,6 +307,16 @@ export const notificationsApi = {
     if (!res.ok) throw new Error('Failed');
     return res.json();
   },
+  
+  async create(data: { title: string; message: string; type?: string }) {
+    const res = await apiFetch('/notifications', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error);
+    return result;
+  },
 };
 
 // ==================== PROFILE API ====================

@@ -98,8 +98,8 @@ export default function ScheduleView({ tasks, habits, sessions, goals }: Schedul
 
   return (
     <div className="relative w-full h-full pt-4 pb-20">
-      {/* Decorative BGs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Decorative BGs - Hidden on mobile for performance */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-primary/5 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/3" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-blue/5 blur-[100px] rounded-full -translate-x-1/3 translate-y-1/3" />
       </div>

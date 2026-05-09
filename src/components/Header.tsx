@@ -80,10 +80,16 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
                  {format(time, 'HH:mm')}
                </p>
             </div>
-            {/* Mobile: show only time */}
-            <p className="flex md:hidden text-[10px] font-bold text-brand-text/40 tabular-nums mt-0.5">
-              {format(time, 'HH:mm')}
-            </p>
+            {/* Mobile: show time, day, and date */}
+            <div className="flex md:hidden items-center gap-2 mt-1 opacity-60">
+              <p className="text-[9px] font-black uppercase tracking-wider text-brand-text/60">
+                {format(time, 'EEE, MMM do')}
+              </p>
+              <div className="w-0.5 h-0.5 rounded-full bg-brand-primary/40" />
+              <p className="text-[9px] font-bold text-brand-text/40 tabular-nums">
+                {format(time, 'HH:mm')}
+              </p>
+            </div>
           </div>
         </div>
       <div className="flex items-center gap-3 md:gap-6">
@@ -186,7 +192,7 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
           </button>
 
           {isNotifOpen && (
-            <div className="fixed inset-x-3 top-auto bottom-20 md:bottom-auto md:top-full md:mt-4 md:right-0 md:left-auto md:inset-x-auto md:absolute w-auto md:w-96 bg-white/95 backdrop-blur-3xl border border-white/40 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50 max-h-[60vh] md:max-h-none">
+            <div className="fixed inset-x-3 top-20 bottom-auto md:bottom-auto md:top-full md:mt-4 md:right-0 md:left-auto md:inset-x-auto md:absolute w-auto md:w-96 bg-white/95 backdrop-blur-3xl border border-white/40 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50 max-h-[70vh] md:max-h-none">
               <div className="p-6 border-b border-brand-bg flex items-center justify-between bg-brand-bg/20">
                 <h3 className="text-xs font-black text-brand-text uppercase tracking-[0.3em]">Oracle Updates</h3>
                 {unreadCount > 0 && <span className="text-[10px] font-black bg-brand-primary text-white px-3 py-1 rounded-full uppercase tracking-widest">{unreadCount} New</span>}

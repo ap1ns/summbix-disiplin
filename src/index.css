@@ -70,9 +70,10 @@
   z-index: 1;
 }
 
-* {
+/* Remove global transition for performance */
+/* * {
   @apply transition-colors duration-300;
-}
+} */
 
 .text-gradient {
   @apply text-brand-primary;

@@ -1,10 +1,23 @@
 /**
- * @license
- * SPDX-License-Identifier: Apache-2.0
+ * @file App.tsx
+ * @description Root application component for Summbix Discipline.
+ *
+ * This component is intentionally kept thin. Heavy logic is delegated to
+ * dedicated custom hooks:
+ *  - useAppData     — data fetching, guest sync, cleanup, notification watchers
+ *  - useGoalProgress — computes live goal progress percentages
+ *  - useNotifications — notification state, toast, daily welcome
+ *
+ * Authentication state and profile management live here as they are the
+ * true "root" concerns that everything else depends on.
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Bell, CheckCircle2, Target, X } from 'lucide-react';
+import { cn } from './lib/utils';
+
+// ==================== VIEWS ====================
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Overview from './components/Overview';
@@ -17,354 +30,365 @@ import { ProfileView } from './components/ProfileView';
 import HabitsView from './components/HabitsView';
 import TasksView from './components/TasksView';
 import Login from './components/Login';
-import { AppView, Goal, Task, Habit, FocusSession, Notification, UserProfile } from './types';
-import { authApi, goalsApi, tasksApi, habitsApi, sessionsApi, notificationsApi, profileApi } from './lib/api';
 
+// ==================== TYPES, HOOKS & API ====================
+import { AppView, UserProfile, Notification } from './types';
+import { authApi, profileApi } from './lib/api';
+import { useAppData } from './hooks/useAppData';
+import { useGoalProgress } from './hooks/useGoalProgress';
+import { useNotifications } from './hooks/useNotifications';
+import { DEFAULT_PROFILE, TOAST_DISMISS_DURATION_S } from './lib/constants';
+
+// ==================== TYPE DEFINITIONS ====================
+type FocusTarget = {
+  id: string;
+  type: 'goal' | 'task' | 'habit';
+  title: string;
+  goalId?: string;
+};
+
+// ==================== COMPONENT ====================
 export default function App() {
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
-  const [focusTarget, setFocusTarget] = useState<{ id: string, type: 'goal' | 'task' | 'habit', title: string, goalId?: string } | null>(null);
+  const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const [isAppLoading, setIsAppLoading] = useState(true);
+  const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE as UserProfile);
 
-  const [profile, setProfile] = useState<UserProfile>({
-    name: 'Summbix',
-    avatar: 'Summbix',
-    bio: 'Master of Discipline',
-    email: '',
-    joinDate: new Date().toISOString()
-  });
+  // ==================== CUSTOM HOOKS ====================
 
+  const {
+    notifications,
+    setNotifications,
+    activeToast,
+    dismissToast,
+    addNotification,
+    markNotificationAsRead,
+  } = useNotifications({ isGuest, isAuthenticated, profile });
 
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [habits, setHabits] = useState<Habit[]>([]);
-  const [sessions, setSessions] = useState<FocusSession[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const {
+    goals, setGoals,
+    tasks, setTasks,
+    habits, setHabits,
+    sessions, setSessions,
+    fetchAllData,
+    clearAllData,
+  } = useAppData({ isGuest, isAuthenticated, addNotification });
 
+  // Derives goal progress from raw goals + tasks + habits — no extra state
+  const computedGoals = useGoalProgress(goals, tasks, habits);
 
-
-  // ==================== FETCH ALL DATA FROM BACKEND ====================
-  const fetchAllData = useCallback(async () => {
-    try {
-      const [goalsData, tasksData, habitsData, sessionsData, notifData] = await Promise.all([
-        goalsApi.getAll(),
-        tasksApi.getAll(),
-        habitsApi.getAll(),
-        sessionsApi.getAll(),
-        notificationsApi.getAll(),
-      ]);
-      setGoals(goalsData);
-      setTasks(tasksData);
-      setHabits(habitsData);
-      setSessions(sessionsData);
-      setNotifications(notifData.map((n: any) => ({
-        ...n,
-        time: new Date(n.createdAt).toLocaleString(),
-      })));
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    }
-  }, []);
-
-  // ==================== AUTO-LOGIN (Try refresh token on app load) ====================
+  // Track goal completions for notifications — must be in App because it needs computedGoals
+  const prevCompletedGoalIds = useRef<Set<string>>(new Set());
   useEffect(() => {
-    const tryAutoLogin = async () => {
+    if (!isAuthenticated) return;
+    computedGoals.forEach((goal) => {
+      if (goal.progress === 100 && !prevCompletedGoalIds.current.has(goal.id)) {
+        addNotification(
+          'Mission Transcendence',
+          `Grand objective "${goal.title}" reached 100% mastery. Your discipline has reached a new plateau.`,
+          'goal'
+        );
+      }
+      if (goal.progress === 100) {
+        prevCompletedGoalIds.current.add(goal.id);
+      } else {
+        prevCompletedGoalIds.current.delete(goal.id);
+      }
+    });
+  }, [computedGoals, isAuthenticated, addNotification]);
+
+  // ==================== HELPERS ====================
+
+  /** Maps a raw API user object to our UserProfile shape. */
+  const mapApiUserToProfile = useCallback((user: any): UserProfile => ({
+    name: user.name,
+    avatar: user.avatar || DEFAULT_PROFILE.avatar,
+    bio: user.bio || DEFAULT_PROFILE.bio,
+    email: user.email,
+    joinDate: user.createdAt,
+  }), []);
+
+  // ==================== AUTO-LOGIN (on app mount) ====================
+  useEffect(() => {
+    const attemptAutoLogin = async () => {
       try {
         const user = await authApi.tryRefresh();
         if (user) {
           setIsAuthenticated(true);
           setIsGuest(false);
-          setProfile({
-            name: user.name,
-            avatar: user.avatar || 'Summbix',
-            bio: user.bio || 'Master of Discipline',
-            email: user.email,
-            joinDate: user.createdAt,
-          });
-
+          setProfile(mapApiUserToProfile(user));
           await fetchAllData();
         }
       } catch (err) {
-        console.error("Auto-login failed:", err);
+        console.error('[Auth] Auto-login failed:', err);
       } finally {
         setIsAppLoading(false);
       }
     };
-    tryAutoLogin();
-  }, [fetchAllData]);
+    attemptAutoLogin();
+  }, [fetchAllData, mapApiUserToProfile]);
 
-  // ==================== LOGIN HANDLER ====================
-  const handleLogin = async (name: string, guestMode?: boolean) => {
+  // ==================== AUTH HANDLERS ====================
+
+  const handleLogin = useCallback(async (name: string, guestMode?: boolean) => {
     setIsAuthenticated(true);
+
     if (guestMode) {
       setIsGuest(true);
-      setProfile(prev => ({ ...prev, name: 'Guest Agent' }));
-      setGoals([]);
-      setTasks([]);
-      setHabits([]);
-      setSessions([]);
-    } else {
-      setIsGuest(false);
-      await fetchAllData();
-      try {
-        const me = await profileApi.get();
-        setProfile({
-          name: me.name,
-          avatar: me.avatar || 'Summbix',
-          bio: me.bio || 'Master of Discipline',
-          email: me.email,
-          joinDate: me.createdAt,
-        });
-
-      } catch {
-        setProfile(prev => ({ ...prev, name }));
-      }
+      setProfile((prev) => ({ ...prev, name: 'Guest Agent' }));
+      clearAllData();
+      return;
     }
-  };
 
-  const handleLogout = async () => {
+    setIsGuest(false);
+    await fetchAllData();
+
+    try {
+      const me = await profileApi.get();
+      setProfile(mapApiUserToProfile(me));
+    } catch {
+      // Fallback: use the name provided by the login form
+      setProfile((prev) => ({ ...prev, name }));
+    }
+  }, [fetchAllData, clearAllData, mapApiUserToProfile]);
+
+  const handleLogout = useCallback(async () => {
     try {
       if (!isGuest) await authApi.logout();
-    } catch {}
+    } catch { /* Ignore logout errors */ }
+
     setIsAuthenticated(false);
     setIsGuest(false);
-    setProfile({ name: '', avatar: 'Summbix', bio: 'Master of Discipline', joinDate: '' });
-    setGoals([]);
-    setTasks([]);
-    setHabits([]);
-    setSessions([]);
-  };
+    setProfile(DEFAULT_PROFILE as UserProfile);
+    clearAllData();
+    setNotifications([]);
+  }, [isGuest, clearAllData, setNotifications]);
 
-  const startFocus = (target: { id: string, type: 'goal' | 'task' | 'habit', title: string, goalId?: string }) => {
+  const handleResetAllData = useCallback(async () => {
+    const confirmed = window.confirm(
+      'APAKAH ANDA YAKIN INGIN MENGHAPUS SELURUH DATA?\n(History, Goals, Task, dan Lagu Upload akan hilang permanen)'
+    );
+    if (!confirmed) return;
+
+    localStorage.clear();
+    indexedDB.deleteDatabase('summbix-music');
+
+    if (!isGuest) {
+      try { await profileApi.deleteAccount(); } catch { /* Ignore */ }
+    }
+
+    clearAllData();
+    setNotifications([]);
+    setProfile(DEFAULT_PROFILE as UserProfile);
+    setIsAuthenticated(false);
+
+    window.alert('Seluruh data telah dikosongkan!');
+    window.location.reload();
+  }, [isGuest, clearAllData, setNotifications]);
+
+  const startFocus = useCallback((target: FocusTarget) => {
     setFocusTarget(target);
     setCurrentView('focus');
-  };
-
-  // ==================== SYNC TO BACKEND (localStorage fallback for guest) ====================
-
-  // For guest mode, keep localStorage sync
-  useEffect(() => {
-    if (isGuest) {
-      localStorage.setItem('summbix-goals', JSON.stringify(goals));
-    }
-  }, [goals, isGuest]);
-  useEffect(() => {
-    if (isGuest) {
-      localStorage.setItem('summbix-tasks', JSON.stringify(tasks));
-    }
-  }, [tasks, isGuest]);
-  useEffect(() => {
-    if (isGuest) {
-      localStorage.setItem('summbix-habits', JSON.stringify(habits));
-    }
-  }, [habits, isGuest]);
-  useEffect(() => {
-    if (isGuest) {
-      localStorage.setItem('summbix-sessions', JSON.stringify(sessions));
-    }
-  }, [sessions, isGuest]);
-
-  const markNotificationAsRead = async (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-    if (!isGuest) {
-      try { await notificationsApi.markRead(id); } catch {}
-    }
-  };
-
-  // Clean up tasks older than 30 days
-  useEffect(() => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    setTasks(prevTasks => {
-      const activeTasks = prevTasks.filter(t => {
-        if (!t.date) return true;
-        const taskDate = new Date(t.date);
-        return taskDate.getTime() > thirtyDaysAgo.getTime();
-      });
-      if (activeTasks.length !== prevTasks.length) return activeTasks;
-      return prevTasks;
-    });
   }, []);
 
-  // 🗑️ RESET ALL DATA FUNCTION
-  const handleResetAllData = async () => {
-    if (confirm('APAKAH ANDA YAKIN INGIN MENGHAPUS SELURUH DATA? (History, Goals, Task, dan Lagu Upload akan hilang permanen)')) {
-      localStorage.clear();
-      indexedDB.deleteDatabase('summbix-music');
-      
-      if (!isGuest) {
-        try { await profileApi.deleteAccount(); } catch {}
-      }
-
-      setGoals([]);
-      setTasks([]);
-      setHabits([]);
-      setSessions([]);
-      setNotifications([]);
-      setProfile({
-        name: 'Summbix',
-        avatar: 'Summbix',
-        bio: 'Master of Discipline',
-        joinDate: new Date().toISOString()
-      });
-      
-      setIsAuthenticated(false);
-      alert('Seluruh data telah dikosongkan!');
-      window.location.reload();
-    }
-  };
-
-  const computedGoals = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayTime = today.getTime();
-    const todayStr = today.toISOString().split('T')[0];
-
-    return goals.map(g => {
-      const start = new Date(g.startDate);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(g.deadline);
-      end.setHours(0, 0, 0, 0);
-      
-      const startTime = start.getTime();
-      const endTime = end.getTime();
-      
-      // Calculate total days (inclusive)
-      const totalDays = Math.max(1, Math.floor((endTime - startTime) / (1000 * 60 * 60 * 24)) + 1);
-      const dailyQuota = 100 / totalDays;
-      
-      let earnedProgress = 0;
-      
-      for (let i = 0; i < totalDays; i++) {
-        const currentDate = new Date(startTime + i * 24 * 60 * 60 * 1000);
-        const currentDateStr = currentDate.toISOString().split('T')[0];
-        
-        const dayTasks = tasks.filter(t => 
-          t.goalId === g.id && 
-          (t.date === currentDateStr || (!t.date && currentDateStr === g.deadline))
-        );
-        const dayHabits = habits.filter(h => h.goalId === g.id);
-        
-        const totalItems = dayTasks.length + dayHabits.length;
-        
-        if (totalItems === 0) {
-          if (currentDate.getTime() <= todayTime) {
-            earnedProgress += dailyQuota;
-          }
-        } else {
-          const completedTasks = dayTasks.filter(t => t.completed).length;
-          const completedHabits = dayHabits.filter(h => (h.completedDates || []).includes(currentDateStr)).length;
-          
-          earnedProgress += ((completedTasks + completedHabits) / totalItems) * dailyQuota;
-        }
-      }
-      
-      return { ...g, progress: Math.min(100, Math.round(earnedProgress)) };
-    });
-  }, [goals, tasks, habits]);
-
+  // ==================== VIEW ROUTER ====================
   const renderView = () => {
+    const sharedProps = {
+      isGuest,
+      onNavigate: setCurrentView,
+      onStartFocus: startFocus,
+    };
+
     switch (currentView) {
       case 'dashboard':
-        return <Overview goals={computedGoals} setGoals={setGoals} tasks={tasks} setTasks={setTasks} habits={habits} setHabits={setHabits} sessions={sessions} setSessions={setSessions} onStartFocus={startFocus} onNavigate={setCurrentView} isGuest={isGuest} />;
+        return (
+          <Overview
+            {...sharedProps}
+            goals={computedGoals} setGoals={setGoals}
+            tasks={tasks} setTasks={setTasks}
+            habits={habits} setHabits={setHabits}
+            sessions={sessions} setSessions={setSessions}
+          />
+        );
       case 'analytics':
-        return <AnalyticsView sessions={sessions} goals={computedGoals} tasks={tasks} habits={habits} isGuest={isGuest} />;
+        return (
+          <AnalyticsView
+            sessions={sessions} goals={computedGoals}
+            tasks={tasks} habits={habits}
+            isGuest={isGuest}
+          />
+        );
       case 'schedule':
-        return <ScheduleView tasks={tasks} habits={habits} sessions={sessions} goals={computedGoals} />;
+        return (
+          <ScheduleView
+            tasks={tasks} habits={habits}
+            sessions={sessions} goals={computedGoals}
+          />
+        );
       case 'goals':
-        return <GoalsView goals={computedGoals} setGoals={setGoals} tasks={tasks} habits={habits} sessions={sessions} />;
+        return (
+          <GoalsView
+            goals={computedGoals} setGoals={setGoals}
+            tasks={tasks} habits={habits} sessions={sessions}
+          />
+        );
       case 'history':
         return <HistoryView tasks={tasks} sessions={sessions} goals={computedGoals} />;
       case 'habits':
-        return <HabitsView habits={habits} setHabits={setHabits} goals={computedGoals} sessions={sessions} setSessions={setSessions} onStartFocus={startFocus} onNavigate={setCurrentView} isGuest={isGuest} />;
+        return (
+          <HabitsView
+            {...sharedProps}
+            habits={habits} setHabits={setHabits}
+            goals={computedGoals}
+            sessions={sessions} setSessions={setSessions}
+          />
+        );
       case 'tasks':
-        return <TasksView tasks={tasks} setTasks={setTasks} goals={computedGoals} sessions={sessions} setSessions={setSessions} onStartFocus={startFocus} onNavigate={setCurrentView} isGuest={isGuest} />;
+        return (
+          <TasksView
+            {...sharedProps}
+            tasks={tasks} setTasks={setTasks}
+            goals={computedGoals}
+            sessions={sessions} setSessions={setSessions}
+          />
+        );
       case 'profile':
-        return <ProfileView 
-          profile={profile} 
-          setProfile={setProfile} 
-          isGuest={isGuest} 
-          onLogout={handleLogout}
-        />;
+        return (
+          <ProfileView
+            profile={profile}
+            setProfile={setProfile}
+            isGuest={isGuest}
+            onLogout={handleLogout}
+            onResetData={handleResetAllData}
+          />
+        );
       default:
-        return <Overview goals={computedGoals} setGoals={setGoals} tasks={tasks} setTasks={setTasks} habits={habits} setHabits={setHabits} sessions={sessions} setSessions={setSessions} onStartFocus={startFocus} onNavigate={setCurrentView} isGuest={isGuest} />;
+        return null;
     }
   };
 
-  // Show loading spinner while checking auth
+  // ==================== LOADING STATE ====================
   if (isAppLoading) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-brand-bg">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
           className="w-12 h-12 border-4 border-brand-primary/20 border-t-brand-primary rounded-full"
         />
       </div>
     );
   }
 
+  // ==================== AUTH GATE ====================
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
   }
 
+  // ==================== MAIN APP ====================
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-brand-bg text-brand-text selection:bg-brand-primary/20 font-sans">
-      {/* Main Application Layout */}
+
+      {/* ===== TOAST NOTIFICATION ===== */}
+      <AnimatePresence>
+        {activeToast && (
+          <motion.div
+            initial={{ y: -100, opacity: 0, scale: 0.85 }}
+            animate={{ y: 20, opacity: 1, scale: 1 }}
+            exit={{ y: -100, opacity: 0, scale: 0.85 }}
+            className="fixed top-0 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-sm"
+          >
+            <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-3xl p-5 shadow-2xl flex items-center gap-4">
+              {/* Icon */}
+              <div className={cn(
+                'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg',
+                activeToast.type === 'task' ? 'bg-brand-blue text-white' :
+                activeToast.type === 'goal' ? 'bg-brand-green text-white' :
+                'bg-brand-primary text-white'
+              )}>
+                {activeToast.type === 'task' && <CheckCircle2 className="w-6 h-6" />}
+                {activeToast.type === 'goal' && <Target className="w-6 h-6" />}
+                {(activeToast.type === 'system' || activeToast.type === 'habit') && (
+                  <Bell className="w-6 h-6" />
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <h4 className="text-white text-xs font-black uppercase tracking-widest truncate">
+                  {activeToast.title}
+                </h4>
+                <p className="text-white/60 text-[10px] font-bold truncate mt-1">
+                  {activeToast.message}
+                </p>
+              </div>
+
+              {/* Dismiss button */}
+              <button
+                onClick={dismissToast}
+                aria-label="Dismiss notification"
+                className="p-2 hover:bg-white/10 rounded-xl text-white/40 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Auto-dismiss progress bar */}
+            <motion.div
+              initial={{ scaleX: 1 }}
+              animate={{ scaleX: 0 }}
+              transition={{ duration: TOAST_DISMISS_DURATION_S, ease: 'linear' }}
+              onAnimationComplete={dismissToast}
+              className="absolute bottom-0 left-6 right-6 h-1 bg-brand-primary rounded-full origin-left"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ===== MAIN LAYOUT ===== */}
       <div className="flex h-full w-full relative">
-        {/* Sidebar: rendered as fixed bottom nav on mobile, side panel on desktop */}
         <Sidebar currentView={currentView} setView={setCurrentView} />
-        
+
         <main className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
           <div className="flex-1 overflow-y-auto relative scrollbar-hide">
-            {/* px-4 on mobile, px-10 on desktop */}
             <div className="max-w-[1600px] mx-auto px-4 md:px-10">
-              <Header 
-                goals={computedGoals} 
-                tasks={tasks} 
-                notifications={notifications} 
+
+              <Header
+                goals={computedGoals}
+                tasks={tasks}
+                notifications={notifications}
                 onMarkRead={markNotificationAsRead}
-                onNavigate={setCurrentView} 
+                onNavigate={setCurrentView}
                 profile={profile}
                 onUpdateProfile={setProfile}
                 onLogout={handleLogout}
               />
 
-              {/* Dynamic Neural Background */}
-              <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
-                <motion.div 
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 90, 180, 270, 360],
-                  }}
-                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                  className="absolute -top-[20%] -right-[10%] w-[80%] h-[80%] bg-brand-primary/5 blur-[120px] rounded-full" 
+              {/* Decorative background — disabled on mobile for performance */}
+              <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden hidden md:block">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 180, 270, 360] }}
+                  transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                  className="absolute -top-[20%] -right-[10%] w-[80%] h-[80%] bg-brand-primary/5 blur-[120px] rounded-full"
                 />
-                <motion.div 
-                  animate={{ 
-                    scale: [1.2, 1, 1.2],
-                    rotate: [360, 270, 180, 90, 0],
-                  }}
-                  transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                  className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[70%] bg-brand-blue/5 blur-[100px] rounded-full" 
+                <motion.div
+                  animate={{ scale: [1.2, 1, 1.2], rotate: [360, 270, 180, 90, 0] }}
+                  transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+                  className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[70%] bg-brand-blue/5 blur-[100px] rounded-full"
                 />
-                <div className="absolute inset-0 bg-grain opacity-20" />
               </div>
-              
+              <div className="absolute inset-0 bg-grain opacity-20 pointer-events-none" />
+
+              {/* Page transition animations */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentView}
                   initial={{ opacity: 0, y: 20, scale: 0.98, filter: 'blur(10px)' }}
                   animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -20, scale: 0.98, filter: 'blur(10px)' }}
-                  transition={{ 
-                    type: "spring",
-                    damping: 25,
-                    stiffness: 200,
-                    mass: 0.8
-                  }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200, mass: 0.8 }}
                   className="h-full pb-28 md:pb-20"
                 >
                   {renderView()}
@@ -375,16 +399,16 @@ export default function App() {
         </main>
       </div>
 
-      {/* Focus Mode Overlay (Fixed) */}
+      {/* ===== FOCUS MODE (Full-screen overlay) ===== */}
       <AnimatePresence>
         {currentView === 'focus' && (
           <div className="fixed inset-0 z-[9999]">
-            <FocusView 
-              onExit={() => setCurrentView('dashboard')} 
-              goals={goals} 
-              sessions={sessions} 
-              setSessions={setSessions} 
-              focusTarget={focusTarget} 
+            <FocusView
+              onExit={() => setCurrentView('dashboard')}
+              goals={goals}
+              sessions={sessions}
+              setSessions={setSessions}
+              focusTarget={focusTarget}
               tasks={tasks}
               setTasks={setTasks}
               habits={habits}

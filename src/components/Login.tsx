@@ -69,6 +69,7 @@ export default function Login({ onLogin }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -319,13 +320,15 @@ export default function Login({ onLogin }: LoginProps) {
                       >
                         Google
                       </motion.button>
-                      <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        type="button" onClick={handleDevLogin}
-                        className="bg-brand-primary/10 backdrop-blur-md border border-brand-primary/20 text-brand-primary py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-brand-primary/20 transition-all flex items-center justify-center gap-1"
-                      >
-                        <Zap className="w-3 h-3" /> Dev
-                      </motion.button>
+                      {isLocalHost && (
+                        <motion.button
+                          whileTap={{ scale: 0.95 }}
+                          type="button" onClick={handleDevLogin}
+                          className="bg-brand-primary/10 backdrop-blur-md border border-brand-primary/20 text-brand-primary py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-brand-primary/20 transition-all flex items-center justify-center gap-1"
+                        >
+                          <Zap className="w-3 h-3" /> Dev
+                        </motion.button>
+                      )}
                     </div>
                   </div>
 
@@ -640,13 +643,16 @@ export default function Login({ onLogin }: LoginProps) {
                       <User className="w-3 h-3" /> Explore as Guest
                     </button>
 
-                    <button 
-                      type="button" 
-                      onClick={handleDevLogin}
-                      className="w-full bg-brand-primary/5 border border-brand-primary/20 text-brand-primary py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary/10 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Zap className="w-3 h-3" /> Bypass Authentication (Dev Mode)
-                    </button>
+                    {isLocalHost && (
+                      <button 
+                        type="button" 
+                        onClick={handleDevLogin}
+                        className="w-full bg-brand-primary/5 border border-brand-primary/20 text-brand-primary py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary/10 transition-all flex items-center justify-center gap-2"
+                      >
+                        <Zap className="w-3 h-3" /> Bypass Authentication (Dev Mode)
+                      </button>
+                    )}
+
                   </div>
                 </div>
               </form>
