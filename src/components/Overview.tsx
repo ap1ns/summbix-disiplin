@@ -7,6 +7,7 @@ import { Goal, Task, TimeBlock, Habit, FocusSession, AppView } from '../types';
 import { goalsApi, tasksApi, habitsApi, sessionsApi } from '../lib/api';
 import CustomSelect from './CustomSelect';
 import ConfirmationModal from './ConfirmationModal';
+import Portal from './Portal';
 
 interface OverviewProps {
   goals: Goal[];
@@ -1089,8 +1090,6 @@ export function GoalModal({ isOpen, onClose, onAdd, initialGoal }: { isOpen: boo
     }
   }, [isOpen, initialGoal]);
 
-  if (!isOpen) return null;
-
   const handleValidateAndAdd = () => {
     setError('');
     if (!title) return;
@@ -1108,52 +1107,69 @@ export function GoalModal({ isOpen, onClose, onAdd, initialGoal }: { isOpen: boo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar">
-        <div className="flex items-center justify-between mb-6 md:mb-8">
-          <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialGoal ? "Edit Mission" : "Launch New Mission"}</h3>
-          <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="space-y-4 md:space-y-5">
-          <div>
-            <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Mission Title</label>
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner transition-all" placeholder="e.g. Master React Framework" />
-          </div>
-          <div>
-            <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Short Description</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner h-20 resize-none transition-all" placeholder="What is the ultimate goal?" />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Start Date</label>
-              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-4 py-3.5 text-xs text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Deadline</label>
-              <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-4 py-3.5 text-xs text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
-            </div>
-          </div>
+    <Portal>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md" 
+              onClick={onClose} 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar"
+            >
+              <div className="flex items-center justify-between mb-6 md:mb-8">
+                <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialGoal ? "Edit Mission" : "Launch New Mission"}</h3>
+                <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="space-y-4 md:space-y-5">
+                <div>
+                  <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Mission Title</label>
+                  <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner transition-all" placeholder="e.g. Master React Framework" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Short Description</label>
+                  <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner h-20 resize-none transition-all" placeholder="What is the ultimate goal?" />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Start Date</label>
+                    <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-4 py-3.5 text-xs text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Deadline</label>
+                    <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-4 py-3.5 text-xs text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+                  </div>
+                </div>
 
-          <div>
-            <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-3">Neural Color Code</label>
-            <div className="flex items-center gap-3">
-              {['#E38569', '#98B684', '#3B82F6', '#EF4444', '#8B5CF6'].map(c => (
-                <button key={c} onClick={() => setColor(c)} className={cn("w-9 h-9 rounded-xl border-4 transition-all shadow-sm", color === c ? "border-white ring-4 ring-brand-primary/20 scale-110" : "border-transparent hover:scale-110")} style={{ backgroundColor: c }} />
-              ))}
-            </div>
+                <div>
+                  <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-3">Neural Color Code</label>
+                  <div className="flex items-center gap-3">
+                    {['#E38569', '#98B684', '#3B82F6', '#EF4444', '#8B5CF6'].map(c => (
+                      <button key={c} onClick={() => setColor(c)} className={cn("w-9 h-9 rounded-xl border-4 transition-all shadow-sm", color === c ? "border-white ring-4 ring-brand-primary/20 scale-110" : "border-transparent hover:scale-110")} style={{ backgroundColor: c }} />
+                    ))}
+                  </div>
+                </div>
+                
+                <button onClick={handleValidateAndAdd} className="w-full mt-4 py-4 bg-brand-primary text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/30 uppercase tracking-widest text-xs">
+                  {initialGoal ? "Update Neural Link" : "Establish Mission"}
+                </button>
+                {error && <p className="text-brand-red text-[10px] text-center font-bold mt-3 uppercase tracking-wider">{error}</p>}
+              </div>
+            </motion.div>
           </div>
-          
-          <button onClick={handleValidateAndAdd} className="w-full mt-4 py-4 bg-brand-primary text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/30 uppercase tracking-widest text-xs">
-            {initialGoal ? "Update Neural Link" : "Establish Mission"}
-          </button>
-          {error && <p className="text-brand-red text-[10px] text-center font-bold mt-3 uppercase tracking-wider">{error}</p>}
-        </div>
-      </div>
-    </div>
+        )}
+      </AnimatePresence>
+    </Portal>
   );
 }
 
@@ -1177,7 +1193,7 @@ export function TaskModal({ isOpen, onClose, onAdd, initialTask, goals, defaultG
         setDate(initialTask.date || new Date().toISOString().split('T')[0]);
       } else {
         setTitle('');
-        setGoalId(defaultGoalId || ''); // Pre-fill with default goal if provided
+        setGoalId(defaultGoalId || ''); 
         setPriority('medium');
         setStartTime('');
         setEndTime('');
@@ -1186,8 +1202,6 @@ export function TaskModal({ isOpen, onClose, onAdd, initialTask, goals, defaultG
       setError('');
     }
   }, [isOpen, initialTask, defaultGoalId]);
-
-  if (!isOpen) return null;
 
   const handleValidateAndAdd = () => {
     setError('');
@@ -1198,63 +1212,80 @@ export function TaskModal({ isOpen, onClose, onAdd, initialTask, goals, defaultG
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar">
-        <div className="flex items-center justify-between mb-6 md:mb-8">
-          <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialTask ? "Edit Task" : "Add New Task"}</h3>
-          <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="space-y-4 md:space-y-5">
-          <div>
-            <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Task Title</label>
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)} autoFocus className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-inner" placeholder="e.g. Learn Excel Basics" />
-          </div>
-          <CustomSelect 
-            label="Associated Mission (Optional)"
-            placeholder="Select a mission..."
-            value={goalId}
-            onChange={setGoalId}
-            options={[
-              { id: '', title: 'None (Tanpa Misi)', color: '#CBD5E1' },
-              ...goals.map(g => ({ id: g.id, title: g.title, color: g.color }))
-            ]}
-          />
-          <div>
-            <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Priority</label>
-            <div className="flex items-center gap-2">
-              {(['low', 'medium', 'high'] as const).map(p => (
-                <button key={p} onClick={() => setPriority(p)} className={cn("flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all", priority === p ? (p === 'high' ? "bg-brand-red text-white border-brand-red shadow-lg shadow-brand-red/20" : p === 'medium' ? "bg-brand-orange text-white border-brand-orange shadow-lg shadow-brand-orange/20" : "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20") : "bg-brand-bg border-brand-primary/10 text-brand-text-light hover:bg-white")}>
-                  {p}
+    <Portal>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md" 
+              onClick={onClose} 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar"
+            >
+              <div className="flex items-center justify-between mb-6 md:mb-8">
+                <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialTask ? "Edit Task" : "Add New Task"}</h3>
+                <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
+                  <X className="w-6 h-6" />
                 </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Date</label>
-              <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Start Time (Optional)</label>
-                <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
               </div>
-              <div>
-                <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">End Time (Optional)</label>
-                <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+              <div className="space-y-4 md:space-y-5">
+                <div>
+                  <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Task Title</label>
+                  <input type="text" value={title} onChange={e => setTitle(e.target.value)} autoFocus className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-inner" placeholder="e.g. Learn Excel Basics" />
+                </div>
+                <CustomSelect 
+                  label="Associated Mission (Optional)"
+                  placeholder="Select a mission..."
+                  value={goalId}
+                  onChange={setGoalId}
+                  options={[
+                    { id: '', title: 'None (Tanpa Misi)', color: '#CBD5E1' },
+                    ...goals.map(g => ({ id: g.id, title: g.title, color: g.color }))
+                  ]}
+                />
+                <div>
+                  <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Priority</label>
+                  <div className="flex items-center gap-2">
+                    {(['low', 'medium', 'high'] as const).map(p => (
+                      <button key={p} onClick={() => setPriority(p)} className={cn("flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all", priority === p ? (p === 'high' ? "bg-brand-red text-white border-brand-red shadow-lg shadow-brand-red/20" : p === 'medium' ? "bg-brand-orange text-white border-brand-orange shadow-lg shadow-brand-orange/20" : "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20") : "bg-brand-bg border-brand-primary/10 text-brand-text-light hover:bg-white")}>
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Date</label>
+                    <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Start Time (Optional)</label>
+                      <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">End Time (Optional)</label>
+                      <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+                    </div>
+                  </div>
+                </div>
+                <button onClick={handleValidateAndAdd} className="w-full mt-6 py-4 bg-brand-primary text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/30 uppercase tracking-widest text-xs">
+                  {initialTask ? "Save Changes" : "Add Task"}
+                </button>
+                {error && <p className="text-brand-red text-xs text-center font-bold mt-3">{error}</p>}
               </div>
-            </div>
+            </motion.div>
           </div>
-          <button onClick={handleValidateAndAdd} className="w-full mt-6 py-4 bg-brand-primary text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/30 uppercase tracking-widest text-xs">
-            {initialTask ? "Save Changes" : "Add Task"}
-          </button>
-          {error && <p className="text-brand-red text-xs text-center font-bold mt-3">{error}</p>}
-        </div>
-      </div>
-    </div>
+        )}
+      </AnimatePresence>
+    </Portal>
   );
 }
 
@@ -1274,15 +1305,13 @@ export function HabitModal({ isOpen, onClose, onAdd, initialHabit, goals, defaul
         setEndTime(initialHabit.endTime || '');
       } else {
         setLabel('');
-        setGoalId(defaultGoalId || ''); // Pre-fill with default goal if provided
+        setGoalId(defaultGoalId || ''); 
         setStartTime('');
         setEndTime('');
       }
       setError('');
     }
   }, [isOpen, initialHabit, goals, defaultGoalId]);
-
-  if (!isOpen) return null;
 
   const handleValidateAndAdd = () => {
     setError('');
@@ -1293,46 +1322,63 @@ export function HabitModal({ isOpen, onClose, onAdd, initialHabit, goals, defaul
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-brand-text/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.2)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar">
-        <div className="flex items-center justify-between mb-6 md:mb-8">
-          <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialHabit ? "Edit Habit" : "Add New Habit"}</h3>
-          <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="space-y-4 md:space-y-5">
-          <div>
-            <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Ritual Name</label>
-            <input type="text" value={label} onChange={e => setLabel(e.target.value)} autoFocus className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-inner" placeholder="e.g. Read 10 Pages" />
+    <Portal>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md" 
+              onClick={onClose} 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-white border border-brand-primary/10 rounded-[2rem] md:rounded-[2.5rem] w-full max-w-md p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-h-[calc(100dvh-2rem)] sm:max-h-[90vh] overflow-y-auto custom-scrollbar"
+            >
+              <div className="flex items-center justify-between mb-6 md:mb-8">
+                <h3 className="text-xl md:text-2xl font-black text-brand-text">{initialHabit ? "Edit Habit" : "Add New Habit"}</h3>
+                <button onClick={onClose} className="p-2 text-brand-text-light hover:text-brand-primary transition-colors">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="space-y-4 md:space-y-5">
+                <div>
+                  <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Ritual Name</label>
+                  <input type="text" value={label} onChange={e => setLabel(e.target.value)} autoFocus className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all shadow-inner" placeholder="e.g. Read 10 Pages" />
+                </div>
+                <CustomSelect 
+                  label="Associated Mission (Optional)"
+                  placeholder="Select a mission..."
+                  value={goalId}
+                  onChange={setGoalId}
+                  options={[
+                    { id: '', title: 'None (Tanpa Misi)', color: '#CBD5E1' },
+                    ...goals.map(g => ({ id: g.id, title: g.title, color: g.color }))
+                  ]}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Start Time (Optional)</label>
+                    <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">End Time (Optional)</label>
+                    <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
+                  </div>
+                </div>
+                <button onClick={handleValidateAndAdd} className="w-full mt-6 py-4 bg-brand-primary text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/30 uppercase tracking-widest text-xs">
+                  {initialHabit ? "Save Changes" : "Add Ritual"}
+                </button>
+                {error && <p className="text-brand-red text-xs text-center font-bold mt-3">{error}</p>}
+              </div>
+            </motion.div>
           </div>
-          <CustomSelect 
-            label="Associated Mission (Optional)"
-            placeholder="Select a mission..."
-            value={goalId}
-            onChange={setGoalId}
-            options={[
-              { id: '', title: 'None (Tanpa Misi)', color: '#CBD5E1' },
-              ...goals.map(g => ({ id: g.id, title: g.title, color: g.color }))
-            ]}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">Start Time (Optional)</label>
-              <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
-            </div>
-            <div>
-              <label className="block text-[10px] font-black text-brand-text-light uppercase tracking-widest mb-2">End Time (Optional)</label>
-              <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full bg-brand-bg border border-brand-primary/10 rounded-2xl px-5 py-4 text-sm text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/10 shadow-inner" />
-            </div>
-          </div>
-          <button onClick={handleValidateAndAdd} className="w-full mt-6 py-4 bg-brand-primary text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-brand-primary/30 uppercase tracking-widest text-xs">
-            {initialHabit ? "Save Changes" : "Add Ritual"}
-          </button>
-          {error && <p className="text-brand-red text-xs text-center font-bold mt-3">{error}</p>}
-        </div>
-      </div>
-    </div>
+        )}
+      </AnimatePresence>
+    </Portal>
   );
 }

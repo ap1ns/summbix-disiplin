@@ -5,6 +5,7 @@ import { User, Shield, LogOut, Key, Mail, Camera, Save, AlertCircle, CheckCircle
 import { cn } from '../lib/utils';
 import { profileApi } from '../lib/api';
 import { UserProfile } from '../types';
+import Portal from './Portal';
 
 interface ProfileViewProps {
   profile: UserProfile;
@@ -306,58 +307,60 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout, onResetDat
       </motion.div>
 
       {/* CUSTOM DELETE MODAL */}
-      <AnimatePresence>
-        {showDeleteModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowDeleteModal(false)}
-              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md"
-            />
-            
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.3)] overflow-hidden border border-white/20"
-            >
-              <div className="h-2 bg-red-500 w-full" />
+      <Portal>
+        <AnimatePresence>
+          {showDeleteModal && (
+            <div className="fixed inset-0 z-[100000] flex items-center justify-center p-6">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowDeleteModal(false)}
+                className="absolute inset-0 bg-brand-text/60 backdrop-blur-md"
+              />
               
-              <div className="p-6 md:p-12 text-center">
-                <div className="w-16 h-16 md:w-24 md:h-24 bg-red-50 rounded-[1.5rem] md:rounded-[2.5rem] flex items-center justify-center mx-auto mb-4 md:mb-8 shadow-inner">
-                  <AlertCircle className="w-8 h-8 md:w-12 md:h-12 text-red-500" />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative w-full max-w-lg bg-white rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.3)] overflow-hidden border border-white/20"
+              >
+                <div className="h-2 bg-red-500 w-full" />
+                
+                <div className="p-6 md:p-12 text-center">
+                  <div className="w-16 h-16 md:w-24 md:h-24 bg-red-50 rounded-[1.5rem] md:rounded-[2.5rem] flex items-center justify-center mx-auto mb-4 md:mb-8 shadow-inner">
+                    <AlertCircle className="w-8 h-8 md:w-12 md:h-12 text-red-500" />
+                  </div>
+                  
+                  <h2 className="text-xl md:text-3xl font-black text-brand-text mb-3 md:mb-4 uppercase italic tracking-tight">TERMINATE NODE?</h2>
+                  
+                  <p className="text-[11px] md:text-base text-brand-text-light font-medium leading-relaxed mb-6 md:mb-10">
+                    This action is <span className="text-red-500 font-black italic">IRREVERSIBLE</span>. All your strategic goals, habit patterns, and focus logs will be purged from the Summbix network forever.
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <button 
+                      onClick={() => setShowDeleteModal(false)}
+                      className="py-5 bg-brand-bg text-brand-text-light rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-brand-bg/80 transition-all active:scale-95"
+                    >
+                      Abort Mission
+                    </button>
+                    <button 
+                      onClick={handleDeleteAccount}
+                      disabled={isUpdating}
+                      className="py-5 bg-red-500 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95 flex items-center justify-center gap-2"
+                    >
+                      {isUpdating ? 'Purging...' : 'Terminate Now'}
+                    </button>
+                  </div>
+                  
+                  <p className="mt-8 text-[9px] font-black text-brand-text-light/30 uppercase tracking-[0.3em]">Protocol: Summbix-Zero-Cascade</p>
                 </div>
-                
-                <h2 className="text-xl md:text-3xl font-black text-brand-text mb-3 md:mb-4 uppercase italic tracking-tight">TERMINATE NODE?</h2>
-                
-                <p className="text-[11px] md:text-base text-brand-text-light font-medium leading-relaxed mb-6 md:mb-10">
-                  This action is <span className="text-red-500 font-black italic">IRREVERSIBLE</span>. All your strategic goals, habit patterns, and focus logs will be purged from the Summbix network forever.
-                </p>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <button 
-                    onClick={() => setShowDeleteModal(false)}
-                    className="py-5 bg-brand-bg text-brand-text-light rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-brand-bg/80 transition-all active:scale-95"
-                  >
-                    Abort Mission
-                  </button>
-                  <button 
-                    onClick={handleDeleteAccount}
-                    disabled={isUpdating}
-                    className="py-5 bg-red-500 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95 flex items-center justify-center gap-2"
-                  >
-                    {isUpdating ? 'Purging...' : 'Terminate Now'}
-                  </button>
-                </div>
-                
-                <p className="mt-8 text-[9px] font-black text-brand-text-light/30 uppercase tracking-[0.3em]">Protocol: Summbix-Zero-Cascade</p>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+      </Portal>
     </div>
   );
 }
