@@ -142,10 +142,19 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
   const nowDateStrLocal = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')}`;
 
   // Returns the time status: 'active' | 'locked' | 'expired'
-  // - 'locked': before startTime - 1 minute, or future date
-  // - 'active': within the time window (startTime-1min to endTime)
+  // - 'locked': before startTime - 1 minute, future date, or outside goal date range
+  // - 'active': within the time window (startTime-1min to endTime) AND within goal range
   // - 'expired': after endTime has passed
-  const getHabitTimeStatus = (itemDate?: string, itemStartTime?: string, itemEndTime?: string): 'active' | 'locked' | 'expired' => {
+  const getHabitTimeStatus = (itemDate?: string, itemStartTime?: string, itemEndTime?: string, goalId?: string): 'active' | 'locked' | 'expired' => {
+    // Check goal date range first
+    if (goalId) {
+      const goal = goals.find(g => g.id === goalId);
+      if (goal) {
+        if (nowDateStrLocal < goal.startDate) return 'locked';
+        if (nowDateStrLocal > goal.deadline) return 'expired';
+      }
+    }
+
     // Future date → locked
     if (itemDate && itemDate > nowDateStrLocal) return 'locked';
     // Past date → expired
@@ -169,8 +178,15 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     return 'active';
   };
 
-  // Backward-compatible wrapper for tasks (they only need locked/not-locked)
-  const isLocked = (itemDate?: string, itemStartTime?: string) => {
+  // Backward-compatible wrapper for tasks — also checks goal date range
+  const isLocked = (itemDate?: string, _itemStartTime?: string, goalId?: string) => {
+    // Check goal date range
+    if (goalId) {
+      const goal = goals.find(g => g.id === goalId);
+      if (goal) {
+        if (nowDateStrLocal < goal.startDate || nowDateStrLocal > goal.deadline) return true;
+      }
+    }
     if (itemDate && itemDate > nowDateStrLocal) return true;
     return false;
   };
@@ -236,33 +252,9 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     return 0;
   });
 
-  const displayedTasks = useMemo(() => {
-    const filtered = selectedGoalId ? sortedTasks.filter(t => t.goalId === selectedGoalId) : sortedTasks.filter(t => !t.goalId);
-    return filtered.filter(t => {
-      if (t.goalId) {
-        const goal = goals.find(g => g.id === t.goalId);
-        if (goal) {
-          return nowDateStrLocal >= goal.startDate && nowDateStrLocal <= goal.deadline;
-        }
-      }
-      // Only show today's tasks if they have a date (sortedTasks already mostly handles this)
-      return !t.date || t.date === nowDateStrLocal;
-    });
-  }, [sortedTasks, selectedGoalId, goals, nowDateStrLocal]);
-
-  const displayedHabits = useMemo(() => {
-    const filtered = selectedGoalId ? sortedHabitsList.filter(h => h.goalId === selectedGoalId) : sortedHabitsList.filter(h => !h.goalId);
-    return filtered.filter(h => {
-      if (h.goalId) {
-        const goal = goals.find(g => g.id === h.goalId);
-        if (goal) {
-          return nowDateStrLocal >= goal.startDate && nowDateStrLocal <= goal.deadline;
-        }
-      }
-      // Only show today's habits if they have a date
-      return !h.date || h.date === nowDateStrLocal;
-    });
-  }, [sortedHabitsList, selectedGoalId, goals, nowDateStrLocal]);
+  // Show ALL tasks/habits (don't hide by goal date range) — they'll be locked instead
+  const displayedTasks = selectedGoalId ? sortedTasks.filter(t => t.goalId === selectedGoalId) : sortedTasks.filter(t => !t.goalId);
+  const displayedHabits = selectedGoalId ? sortedHabitsList.filter(h => h.goalId === selectedGoalId) : sortedHabitsList.filter(h => !h.goalId);
 
   const toggleTask = async (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
@@ -279,7 +271,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     if (!habit) return;
 
     // Enforce time window
-    const status = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
+    const status = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime, habit.goalId);
     if (status === 'locked') {
       showToast('This ritual is not yet available. It unlocks 1 minute before start time.');
       return;
@@ -610,13 +602,13 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
                     "p-5 flex items-center gap-5 transition-all group relative",
                     idx !== displayedTasks.length - 1 && "border-b border-brand-primary/5",
                     task.date && task.date !== nowDateStrLocal && "opacity-60",
-                    !isLocked(task.date, task.startTime) ? "cursor-pointer" : "bg-brand-bg/10 cursor-not-allowed"
+                    !isLocked(task.date, task.startTime, task.goalId) ? "cursor-pointer" : "bg-brand-bg/10 cursor-not-allowed"
                   )}
                 >
                   <button 
-                    onClick={() => !isLocked(task.date, task.startTime) && toggleTask(task.id)}
-                    className={cn("flex-shrink-0 transition-transform active:scale-90", isLocked(task.date, task.startTime) && "cursor-not-allowed")}
-                    disabled={isLocked(task.date, task.startTime)}
+                    onClick={() => !isLocked(task.date, task.startTime, task.goalId) && toggleTask(task.id)}
+                    className={cn("flex-shrink-0 transition-transform active:scale-90", isLocked(task.date, task.startTime, task.goalId) && "cursor-not-allowed")}
+                    disabled={isLocked(task.date, task.startTime, task.goalId)}
                   >
                     {task.completed ? (
                       <div className="w-7 h-7 bg-brand-green rounded-xl flex items-center justify-center shadow-lg shadow-brand-green/20">
@@ -631,7 +623,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
                   
                   <div 
                     className="flex-1 min-w-0" 
-                    onClick={() => !isLocked(task.date, task.startTime) && toggleTask(task.id)}
+                    onClick={() => !isLocked(task.date, task.startTime, task.goalId) && toggleTask(task.id)}
                   >
                     <p className={cn("text-base font-bold transition-all truncate", task.completed ? "text-brand-text-light line-through opacity-50" : "text-brand-text")}>
                       {task.title}
@@ -770,7 +762,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
               const todaySessions = habitSessions.filter(s => s.date === nowDateStrLocal);
               const totalHabitSecondsToday = todaySessions.reduce((acc, s) => acc + s.duration, 0);
               const goal = goals.find(g => g.id === habit.goalId);
-              const timeStatus = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
+              const timeStatus = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime, habit.goalId);
               
               return (
                 <HabitItem 

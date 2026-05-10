@@ -39,7 +39,16 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
 
   const isHabitDoneToday = (h: Habit) => h.completedDates?.includes(todayStr) || false;
 
-  const getHabitTimeStatus = (itemDate?: string, itemStartTime?: string, itemEndTime?: string): 'active' | 'locked' | 'expired' => {
+  const getHabitTimeStatus = (itemDate?: string, itemStartTime?: string, itemEndTime?: string, goalId?: string): 'active' | 'locked' | 'expired' => {
+    // Check goal date range first
+    if (goalId) {
+      const goal = goals.find(g => g.id === goalId);
+      if (goal) {
+        if (todayStr < goal.startDate) return 'locked';
+        if (todayStr > goal.deadline) return 'expired';
+      }
+    }
+
     if (itemDate && itemDate > todayStr) return 'locked';
     if (itemDate && itemDate < todayStr) return 'expired';
     if (!itemStartTime || !itemEndTime) return 'active';
@@ -70,7 +79,7 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
     const habit = habits.find(h => h.id === habitId);
     if (!habit) return;
 
-    const status = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
+    const status = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime, habit.goalId);
     if (status === 'locked' || status === 'expired') return;
 
     if (isHabitDoneToday(habit)) {
@@ -216,7 +225,7 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
           {filteredHabits.map((habit, idx) => {
             const isDone = isHabitDoneToday(habit);
             const goal = goals.find(g => g.id === habit.goalId);
-            const timeStatus = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
+            const timeStatus = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime, habit.goalId);
             const isDisabled = timeStatus !== 'active';
             const todaySessions = sessions.filter(s => s.habitId === habit.id && s.date === todayStr);
             const totalFocusToday = todaySessions.reduce((acc, s) => acc + s.duration, 0);
