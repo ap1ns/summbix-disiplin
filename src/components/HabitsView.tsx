@@ -25,10 +25,35 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGoalFilter, setSelectedGoalFilter] = useState<string | 'all'>('all');
   const [resetModal, setResetModal] = useState<{ isOpen: boolean, id: string } | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Update current time every 30 seconds for time-window checks
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 30000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nowHour = currentTime.getHours();
+  const nowMin = currentTime.getMinutes();
+  const todayStr = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')}`;
 
   const isHabitDoneToday = (h: Habit) => h.completedDates?.includes(todayStr) || false;
+
+  const getHabitTimeStatus = (itemDate?: string, itemStartTime?: string, itemEndTime?: string): 'active' | 'locked' | 'expired' => {
+    if (itemDate && itemDate > todayStr) return 'locked';
+    if (itemDate && itemDate < todayStr) return 'expired';
+    if (!itemStartTime || !itemEndTime) return 'active';
+
+    const [sh, sm] = itemStartTime.split(':').map(Number);
+    const earlyUnlockMinutes = Math.max(0, sh * 60 + sm - 1);
+    const [eh, em] = itemEndTime.split(':').map(Number);
+    const endMinutes = eh * 60 + em;
+    const nowMinutes = nowHour * 60 + nowMin;
+
+    if (nowMinutes > endMinutes) return 'expired';
+    if (nowMinutes < earlyUnlockMinutes) return 'locked';
+    return 'active';
+  };
 
   const filteredHabits = habits.filter(h => {
     const matchesSearch = h.label.toLowerCase().includes(searchQuery.toLowerCase());
@@ -43,7 +68,12 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
 
   const toggleHabit = async (habitId: string) => {
     const habit = habits.find(h => h.id === habitId);
-    if (isHabitDoneToday(habit!)) {
+    if (!habit) return;
+
+    const status = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
+    if (status === 'locked' || status === 'expired') return;
+
+    if (isHabitDoneToday(habit)) {
       setResetModal({ isOpen: true, id: habitId });
       return;
     }
@@ -186,6 +216,12 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
           {filteredHabits.map((habit, idx) => {
             const isDone = isHabitDoneToday(habit);
             const goal = goals.find(g => g.id === habit.goalId);
+            const timeStatus = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
+            const isDisabled = timeStatus !== 'active';
+            const todaySessions = sessions.filter(s => s.habitId === habit.id && s.date === todayStr);
+            const totalFocusToday = todaySessions.reduce((acc, s) => acc + s.duration, 0);
+            const focusH = Math.floor(totalFocusToday / 3600);
+            const focusM = Math.floor((totalFocusToday % 3600) / 60);
 
             return (
               <motion.div
@@ -196,10 +232,23 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ delay: idx * 0.05 }}
                 className={cn(
-                  "group relative bg-white border rounded-[2rem] md:rounded-[3rem] p-5 md:p-8 transition-all hover:shadow-2xl overflow-hidden",
-                  isDone ? "border-brand-green/20 bg-brand-green/[0.02]" : "border-brand-primary/10"
+                  "group relative bg-white border rounded-[2rem] md:rounded-[3rem] p-5 md:p-8 transition-all overflow-hidden",
+                  isDone ? "border-brand-green/20 bg-brand-green/[0.02]" : "border-brand-primary/10",
+                  timeStatus === 'locked' ? "opacity-50" : timeStatus === 'expired' && !isDone ? "opacity-40" : "hover:shadow-2xl"
                 )}
               >
+                {/* Status badge */}
+                {timeStatus === 'locked' && (
+                  <div className="absolute top-4 right-4 text-[8px] font-black uppercase tracking-widest text-brand-text-light bg-brand-bg px-3 py-1 rounded-full border border-brand-primary/10 z-20">
+                    🔒 Locked
+                  </div>
+                )}
+                {timeStatus === 'expired' && !isDone && (
+                  <div className="absolute top-4 right-4 text-[8px] font-black uppercase tracking-widest text-brand-red bg-brand-red/5 px-3 py-1 rounded-full border border-brand-red/10 z-20">
+                    ⏰ Expired
+                  </div>
+                )}
+
                 {/* Visual Accent */}
                 <div
                   className="absolute top-0 right-0 w-32 h-32 opacity-[0.03] group-hover:opacity-[0.1] transition-all transform group-hover:scale-150 duration-1000"
@@ -211,12 +260,15 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
                 <div className="flex items-start justify-between mb-8 relative z-10">
                   <button
                     onClick={() => toggleHabit(habit.id)}
+                    disabled={isDisabled}
                     className={cn(
-                      "w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-lg active:scale-90",
-                      isDone ? "bg-brand-green text-white shadow-brand-green/30" : "bg-brand-bg border-2 border-brand-primary/20 text-brand-primary/20 hover:border-brand-primary hover:text-brand-primary"
+                      "w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-lg",
+                      isDone ? "bg-brand-green text-white shadow-brand-green/30" 
+                      : isDisabled ? "bg-brand-bg border-2 border-brand-primary/10 text-brand-primary/10 cursor-not-allowed" 
+                      : "bg-brand-bg border-2 border-brand-primary/20 text-brand-primary/20 hover:border-brand-primary hover:text-brand-primary active:scale-90"
                     )}
                   >
-                    <CheckCircle2 className={cn("w-7 h-7", isDone ? "opacity-100" : "opacity-0 group-hover:opacity-100")} />
+                    <CheckCircle2 className={cn("w-7 h-7", isDone ? "opacity-100" : isDisabled ? "opacity-30" : "opacity-0 group-hover:opacity-100")} />
                   </button>
 
                   <div className="flex items-center gap-2 md:opacity-0 md:group-hover:opacity-100 transition-all md:translate-x-4 md:group-hover:translate-x-0">
@@ -238,7 +290,9 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
                 <div className="relative z-10">
                   <h4 className={cn(
                     "text-2xl font-black tracking-tight mb-2 transition-all",
-                    isDone ? "text-brand-text-light line-through opacity-50" : "text-brand-text group-hover:text-brand-primary"
+                    isDone ? "text-brand-text-light line-through opacity-50" 
+                    : timeStatus === 'expired' ? "text-brand-text-light line-through opacity-60" 
+                    : "text-brand-text group-hover:text-brand-primary"
                   )}>
                     {habit.label}
                   </h4>
@@ -256,6 +310,12 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
                         {habit.startTime} - {habit.endTime}
                       </span>
                     )}
+                    {totalFocusToday > 0 && (
+                      <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl border border-brand-orange/20 bg-brand-orange/5 text-brand-orange flex items-center gap-2">
+                        <Flame className="w-3.5 h-3.5" />
+                        {focusH > 0 ? `${focusH}h ` : ''}{focusM}m today
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -267,7 +327,7 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
                       {habit.completedDates?.length || 0} Day Streak
                     </span>
                   </div>
-                  {!isDone && (
+                  {timeStatus === 'active' && !isDone && (
                     <button
                       onClick={(e) => { e.stopPropagation(); onStartFocus({ id: habit.id, type: 'habit', title: habit.label, goalId: habit.goalId }); }}
                       className="p-4 bg-brand-primary text-white rounded-3xl shadow-xl shadow-brand-primary/20 hover:scale-110 active:scale-95 transition-all"

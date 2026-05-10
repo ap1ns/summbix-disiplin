@@ -99,6 +99,43 @@ export default function App() {
     });
   }, [computedGoals, isAuthenticated, addNotification]);
 
+  // ==================== HABIT REMINDER NOTIFICATIONS ====================
+  const notifiedHabitIds = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!isAuthenticated || habits.length === 0) return;
+
+    const checkHabitReminders = () => {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      const todayStr = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+
+      habits.forEach((habit) => {
+        if (!habit.startTime) return;
+        // Skip if already notified today
+        const notifKey = `${habit.id}-${todayStr}`;
+        if (notifiedHabitIds.current.has(notifKey)) return;
+
+        const [sh, sm] = habit.startTime.split(':').map(Number);
+        const startMinutes = sh * 60 + sm;
+        const diff = startMinutes - nowMinutes;
+
+        // Notify when habit starts within 1 minute (0 <= diff <= 1)
+        if (diff >= 0 && diff <= 1) {
+          addNotification(
+            'Ritual Starting Soon',
+            `"${habit.label}" begins at ${habit.startTime}. Prepare yourself.`,
+            'habit'
+          );
+          notifiedHabitIds.current.add(notifKey);
+        }
+      });
+    };
+
+    checkHabitReminders(); // Check immediately
+    const timer = setInterval(checkHabitReminders, 30000); // Check every 30s
+    return () => clearInterval(timer);
+  }, [isAuthenticated, habits, addNotification]);
+
   // ==================== HELPERS ====================
 
   /** Maps a raw API user object to our UserProfile shape. */

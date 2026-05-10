@@ -42,7 +42,27 @@ export default function ScheduleView({ tasks, habits, sessions, goals }: Schedul
 
   const getItemsForDate = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
-    const dTasks = tasks.filter(t => t.date === dateStr);
+    
+    // 1. Filter tasks for this date
+    const dTasks = tasks.filter(t => {
+      // If task has a specific date, it must match
+      if (t.date && t.date !== dateStr) return false;
+      
+      // If task belongs to a goal, date must be within goal range
+      if (t.goalId) {
+        const goal = goals.find(g => g.id === t.goalId);
+        if (goal) {
+          if (dateStr < goal.startDate || dateStr > goal.deadline) return false;
+        }
+      }
+
+      // If it has NO date and NO goal, it doesn't show in the specific date timeline
+      // unless it's considered "daily/unscheduled". 
+      // But based on user request, it should match the specific date or range.
+      if (!t.date && !t.goalId) return false;
+
+      return true;
+    });
     
     const events: ScheduleEvent[] = [];
     
@@ -62,7 +82,26 @@ export default function ScheduleView({ tasks, habits, sessions, goals }: Schedul
       });
     });
 
-    habits.forEach(h => {
+    // 2. Filter habits for this date
+    const dHabits = habits.filter(h => {
+      // If habit has a specific date, it must match
+      if (h.date && h.date !== dateStr) return false;
+
+      // If habit belongs to a goal, date must be within goal range
+      if (h.goalId) {
+        const goal = goals.find(g => g.id === h.goalId);
+        if (goal) {
+          if (dateStr < goal.startDate || dateStr > goal.deadline) return false;
+        }
+      }
+
+      // Standalone habits with no date show up every day (daily discipline)
+      // unless user implies they should only show if "active".
+      // But usually habits are recurring.
+      return true;
+    });
+
+    dHabits.forEach(h => {
       const goal = goals.find(g => g.id === h.goalId);
       const isCompleted = h.done || h.completedDates?.includes(dateStr);
       events.push({

@@ -44,7 +44,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
   };
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 10000); // update every 10s
+    const timer = setInterval(() => setCurrentTime(new Date()), 30000); // update every 30s for time-window checks
     return () => clearInterval(timer);
   }, []);
 
@@ -59,28 +59,57 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     const combinedBlocks: TimeBlock[] = [];
 
     tasks.forEach(t => {
-      if ((!t.date || t.date === nowDateStr) && t.startTime && t.endTime) {
-        combinedBlocks.push({
-          id: `tb-t-${t.id}`,
-          title: t.title,
-          startTime: t.startTime,
-          endTime: t.endTime,
-          status: 'upcoming'
-        });
+      // 1. Must have time defined
+      if (!t.startTime || !t.endTime) return;
+
+      // 2. If task has a specific date, it must be today
+      if (t.date && t.date !== nowDateStr) return;
+
+      // 3. If task belongs to a goal, today must be within the goal's active window
+      if (t.goalId) {
+        const goal = goals.find(g => g.id === t.goalId);
+        if (goal) {
+          if (nowDateStr < goal.startDate || nowDateStr > goal.deadline) return;
+        }
       }
+
+      combinedBlocks.push({
+        id: `tb-t-${t.id}`,
+        title: t.title,
+        startTime: t.startTime,
+        endTime: t.endTime,
+        status: 'upcoming',
+        goalId: t.goalId
+      });
     });
 
     habits.forEach(h => {
-      if ((!(h as any).date || (h as any).date === nowDateStr) && (h as any).startTime && (h as any).endTime) {
-        combinedBlocks.push({
-          id: `tb-h-${h.id}`,
-          title: h.label,
-          startTime: (h as any).startTime,
-          endTime: (h as any).endTime,
-          status: 'upcoming',
-          goalId: h.goalId
-        });
+      const habitDate = (h as any).date;
+      const startTime = (h as any).startTime;
+      const endTime = (h as any).endTime;
+
+      // 1. Must have time defined
+      if (!startTime || !endTime) return;
+
+      // 2. If habit has a specific date, it must be today
+      if (habitDate && habitDate !== nowDateStr) return;
+
+      // 3. If habit belongs to a goal, today must be within the goal's active window
+      if (h.goalId) {
+        const goal = goals.find(g => g.id === h.goalId);
+        if (goal) {
+          if (nowDateStr < goal.startDate || nowDateStr > goal.deadline) return;
+        }
       }
+
+      combinedBlocks.push({
+        id: `tb-h-${h.id}`,
+        title: h.label,
+        startTime: startTime,
+        endTime: endTime,
+        status: 'upcoming',
+        goalId: h.goalId
+      });
     });
 
     combinedBlocks.sort((a, b) => a.startTime.localeCompare(b.startTime));
@@ -96,7 +125,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
       }
       return { ...block, status };
     });
-  }, [currentTime, tasks, habits]);
+  }, [currentTime, tasks, habits, goals]);
 
   const scheduleTimeRange = useMemo(() => {
     if (computedTimeBlocks.length === 0) return '00:00 — 00:00';
@@ -112,7 +141,36 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
   const nowTimeStr = `${nowHour.toString().padStart(2, '0')}:${nowMin.toString().padStart(2, '0')}`;
   const nowDateStrLocal = `${currentTime.getFullYear()}-${(currentTime.getMonth() + 1).toString().padStart(2, '0')}-${currentTime.getDate().toString().padStart(2, '0')}`;
 
-  const isLocked = (itemDate?: string, _itemStartTime?: string) => {
+  // Returns the time status: 'active' | 'locked' | 'expired'
+  // - 'locked': before startTime - 1 minute, or future date
+  // - 'active': within the time window (startTime-1min to endTime)
+  // - 'expired': after endTime has passed
+  const getHabitTimeStatus = (itemDate?: string, itemStartTime?: string, itemEndTime?: string): 'active' | 'locked' | 'expired' => {
+    // Future date → locked
+    if (itemDate && itemDate > nowDateStrLocal) return 'locked';
+    // Past date → expired
+    if (itemDate && itemDate < nowDateStrLocal) return 'expired';
+
+    // No time constraints → always active
+    if (!itemStartTime || !itemEndTime) return 'active';
+
+    // Subtract 1 minute from start time for early unlock
+    const [sh, sm] = itemStartTime.split(':').map(Number);
+    const startMinutes = sh * 60 + sm;
+    const earlyUnlockMinutes = Math.max(0, startMinutes - 1);
+
+    const [eh, em] = itemEndTime.split(':').map(Number);
+    const endMinutes = eh * 60 + em;
+
+    const nowMinutes = nowHour * 60 + nowMin;
+
+    if (nowMinutes > endMinutes) return 'expired';
+    if (nowMinutes < earlyUnlockMinutes) return 'locked';
+    return 'active';
+  };
+
+  // Backward-compatible wrapper for tasks (they only need locked/not-locked)
+  const isLocked = (itemDate?: string, itemStartTime?: string) => {
     if (itemDate && itemDate > nowDateStrLocal) return true;
     return false;
   };
@@ -178,8 +236,33 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     return 0;
   });
 
-  const displayedTasks = selectedGoalId ? sortedTasks.filter(t => t.goalId === selectedGoalId) : sortedTasks.filter(t => !t.goalId);
-  const displayedHabits = selectedGoalId ? sortedHabitsList.filter(h => h.goalId === selectedGoalId) : sortedHabitsList.filter(h => !h.goalId);
+  const displayedTasks = useMemo(() => {
+    const filtered = selectedGoalId ? sortedTasks.filter(t => t.goalId === selectedGoalId) : sortedTasks.filter(t => !t.goalId);
+    return filtered.filter(t => {
+      if (t.goalId) {
+        const goal = goals.find(g => g.id === t.goalId);
+        if (goal) {
+          return nowDateStrLocal >= goal.startDate && nowDateStrLocal <= goal.deadline;
+        }
+      }
+      // Only show today's tasks if they have a date (sortedTasks already mostly handles this)
+      return !t.date || t.date === nowDateStrLocal;
+    });
+  }, [sortedTasks, selectedGoalId, goals, nowDateStrLocal]);
+
+  const displayedHabits = useMemo(() => {
+    const filtered = selectedGoalId ? sortedHabitsList.filter(h => h.goalId === selectedGoalId) : sortedHabitsList.filter(h => !h.goalId);
+    return filtered.filter(h => {
+      if (h.goalId) {
+        const goal = goals.find(g => g.id === h.goalId);
+        if (goal) {
+          return nowDateStrLocal >= goal.startDate && nowDateStrLocal <= goal.deadline;
+        }
+      }
+      // Only show today's habits if they have a date
+      return !h.date || h.date === nowDateStrLocal;
+    });
+  }, [sortedHabitsList, selectedGoalId, goals, nowDateStrLocal]);
 
   const toggleTask = async (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
@@ -193,7 +276,20 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
 
   const toggleHabit = async (habitId: string) => {
     const habit = habits.find(h => h.id === habitId);
-    if (isHabitDoneToday(habit!)) {
+    if (!habit) return;
+
+    // Enforce time window
+    const status = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
+    if (status === 'locked') {
+      showToast('This ritual is not yet available. It unlocks 1 minute before start time.');
+      return;
+    }
+    if (status === 'expired') {
+      showToast('This ritual\'s time window has ended.');
+      return;
+    }
+
+    if (isHabitDoneToday(habit)) {
       setResetModal({ isOpen: true, type: 'habit', id: habitId });
       return;
     }
@@ -491,7 +587,8 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
             </div>
           </div>
           <div className="bg-white border border-brand-primary/10 rounded-[1.8rem] md:rounded-[2.5rem] overflow-hidden shadow-xl">
-            {displayedTasks.slice(0, 5).map((task, idx) => {
+            <div className="max-h-[360px] overflow-y-auto scrollbar-hide">
+              {displayedTasks.map((task, idx) => {
               const taskSessions = sessions.filter(s => s.taskId === task.id);
               const totalTaskSeconds = taskSessions.reduce((acc, s) => acc + s.duration, 0);
               const taskHours = Math.floor(totalTaskSeconds / 3600);
@@ -511,7 +608,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
                   } as React.CSSProperties}
                   className={cn(
                     "p-5 flex items-center gap-5 transition-all group relative",
-                    idx !== Math.min(displayedTasks.length, 5) - 1 && "border-b border-brand-primary/5",
+                    idx !== displayedTasks.length - 1 && "border-b border-brand-primary/5",
                     task.date && task.date !== nowDateStrLocal && "opacity-60",
                     !isLocked(task.date, task.startTime) ? "cursor-pointer" : "bg-brand-bg/10 cursor-not-allowed"
                   )}
@@ -602,16 +699,15 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
                 </motion.div>
               );
             })}
-            {displayedTasks.length > 5 && (
-              <div className="p-6 text-center border-t border-brand-primary/5">
-                <button onClick={() => onNavigate?.('schedule')} className="text-[10px] font-black text-brand-text-light hover:text-brand-primary transition-all uppercase tracking-[0.2em]">
-                  Master All {displayedTasks.length - 5} Tasks in Schedule
-                </button>
-              </div>
-            )}
-            {displayedTasks.length === 0 && (
-              <div className="p-12 text-center text-brand-text-light/50 font-black uppercase tracking-widest text-[10px]">No missions pending</div>
-            )}
+              {displayedTasks.length > 3 && (
+                <div className="p-4 text-center border-t border-brand-primary/5 bg-brand-bg/10">
+                  <p className="text-[8px] font-black text-brand-text-light uppercase tracking-widest">Scroll to see {displayedTasks.length - 3} more missions</p>
+                </div>
+              )}
+              {displayedTasks.length === 0 && (
+                <div className="p-12 text-center text-brand-text-light/50 font-black uppercase tracking-widest text-[10px]">No missions pending</div>
+              )}
+            </div>
           </div>
         </section>
       </div>
@@ -668,29 +764,37 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
               Add
             </button>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[400px] overflow-y-auto scrollbar-hide pr-1">
             {displayedHabits.map(habit => {
               const habitSessions = sessions.filter(s => s.habitId === habit.id);
-              const totalHabitSeconds = habitSessions.reduce((acc, s) => acc + s.duration, 0);
+              const todaySessions = habitSessions.filter(s => s.date === nowDateStrLocal);
+              const totalHabitSecondsToday = todaySessions.reduce((acc, s) => acc + s.duration, 0);
               const goal = goals.find(g => g.id === habit.goalId);
+              const timeStatus = getHabitTimeStatus(habit.date, habit.startTime, habit.endTime);
               
               return (
                 <HabitItem 
                   key={habit.id} 
                   label={habit.label} 
                   done={isHabitDoneToday(habit)} 
-                  startTime={(habit as any).startTime}
-                  endTime={(habit as any).endTime}
-                  date={(habit as any).date}
-                  isLocked={isLocked((habit as any).date, (habit as any).startTime)}
+                  startTime={habit.startTime}
+                  endTime={habit.endTime}
+                  date={habit.date}
+                  timeStatus={timeStatus}
                   onClick={() => toggleHabit(habit.id)} 
                   onEdit={() => { setEditingHabit(habit); setIsHabitModalOpen(true); }}
                   onDelete={() => handleDeleteHabit(habit.id)}
-                  onPlay={() => onStartFocus({ id: habit.id, type: 'habit', title: habit.label, goalId: habit.goalId })}
+                  onPlay={() => {
+                    if (timeStatus !== 'active') {
+                      showToast(timeStatus === 'locked' ? 'This ritual has not started yet.' : 'This ritual\'s time window has ended.');
+                      return;
+                    }
+                    onStartFocus({ id: habit.id, type: 'habit', title: habit.label, goalId: habit.goalId });
+                  }}
                   goalTitle={goal?.title}
                   goalColor={goal?.color}
                   onGoalClick={() => setSelectedGoalId(selectedGoalId === habit.goalId ? null : (habit.goalId || null))}
-                  totalSeconds={totalHabitSeconds}
+                  totalSeconds={totalHabitSecondsToday}
                 />
               );
             })}
@@ -984,31 +1088,52 @@ const TimelineBlock: React.FC<{ block: TimeBlock, goals: Goal[] }> = ({ block, g
   );
 }
 
-const HabitItem: React.FC<{ label: string, done: boolean, onClick: () => void, onPlay: () => void, onEdit: () => void, onDelete: () => void, startTime?: string, endTime?: string, date?: string, isLocked?: boolean, goalTitle?: string, goalColor?: string, onGoalClick?: () => void, totalSeconds?: number }> = ({ label, done, onClick, onPlay, onEdit, onDelete, startTime, endTime, date, isLocked, goalTitle, goalColor, onGoalClick, totalSeconds = 0 }) => {
+const HabitItem: React.FC<{ label: string, done: boolean, onClick: () => void, onPlay: () => void, onEdit: () => void, onDelete: () => void, startTime?: string, endTime?: string, date?: string, timeStatus?: 'active' | 'locked' | 'expired', goalTitle?: string, goalColor?: string, onGoalClick?: () => void, totalSeconds?: number }> = ({ label, done, onClick, onPlay, onEdit, onDelete, startTime, endTime, date, timeStatus = 'active', goalTitle, goalColor, onGoalClick, totalSeconds = 0 }) => {
   const h = Math.floor(totalSeconds / 3600);
   const m = Math.floor((totalSeconds % 3600) / 60);
+  const isDisabled = timeStatus !== 'active';
 
   return (
     <motion.div 
       layout
-      whileHover={{ x: 5 }}
-      onClick={() => !isLocked && onClick()}
+      whileHover={!isDisabled ? { x: 5 } : undefined}
+      onClick={() => !isDisabled && onClick()}
       className={cn(
         "flex items-center gap-4 p-5 rounded-[2.5rem] transition-all group relative overflow-hidden border",
-        isLocked ? "opacity-40 grayscale pointer-events-none" : "hover:bg-white bg-white border-brand-primary/5 hover:shadow-xl cursor-pointer shadow-sm",
+        timeStatus === 'locked' ? "opacity-50 bg-brand-bg/50 border-brand-primary/5 cursor-not-allowed" 
+        : timeStatus === 'expired' ? "opacity-40 bg-brand-bg/30 border-brand-primary/5 cursor-not-allowed" 
+        : "hover:bg-white bg-white border-brand-primary/5 hover:shadow-xl cursor-pointer shadow-sm",
         goalTitle ? "border-l-4" : ""
       )}
       style={goalTitle ? { borderLeftColor: goalColor } : {}}
     >
+      {/* Status badge for locked/expired */}
+      {timeStatus === 'locked' && (
+        <div className="absolute top-2 right-3 text-[7px] font-black uppercase tracking-widest text-brand-text-light bg-brand-bg px-2 py-0.5 rounded-full border border-brand-primary/10">
+          🔒 Locked
+        </div>
+      )}
+      {timeStatus === 'expired' && !done && (
+        <div className="absolute top-2 right-3 text-[7px] font-black uppercase tracking-widest text-brand-red bg-brand-red/5 px-2 py-0.5 rounded-full border border-brand-red/10">
+          ⏰ Expired
+        </div>
+      )}
+
       <div className={cn(
         "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0 shadow-lg",
-        done ? "bg-brand-green border-brand-green shadow-brand-green/20" : "border-brand-primary/20 bg-white group-hover:border-brand-primary/50",
+        done ? "bg-brand-green border-brand-green shadow-brand-green/20" 
+        : isDisabled ? "border-brand-primary/10 bg-brand-bg" 
+        : "border-brand-primary/20 bg-white group-hover:border-brand-primary/50",
       )}>
         {done && <CheckCircle2 className="w-5 h-5 text-white" />}
-        {!done && <div className="w-2.5 h-2.5 rounded-full bg-brand-primary/0 group-hover:bg-brand-primary/20 transition-all" />}
+        {!done && !isDisabled && <div className="w-2.5 h-2.5 rounded-full bg-brand-primary/0 group-hover:bg-brand-primary/20 transition-all" />}
       </div>
       <div className="flex flex-col flex-1 min-w-0">
-        <span className={cn("text-base font-black truncate transition-all", done ? "text-brand-text-light line-through opacity-50" : "text-brand-text group-hover:text-brand-primary")}>
+        <span className={cn("text-base font-black truncate transition-all", 
+          done ? "text-brand-text-light line-through opacity-50" 
+          : timeStatus === 'expired' ? "text-brand-text-light line-through opacity-60" 
+          : "text-brand-text group-hover:text-brand-primary"
+        )}>
           {label}
         </span>
         <div className="flex flex-wrap items-center gap-2 mt-1">
@@ -1029,7 +1154,7 @@ const HabitItem: React.FC<{ label: string, done: boolean, onClick: () => void, o
           {totalSeconds > 0 && (
             <span className="text-[8px] font-black text-brand-orange uppercase tracking-widest flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              {h > 0 ? `${h}h ` : ''}{m}m
+              {h > 0 ? `${h}h ` : ''}{m}m focused today
             </span>
           )}
           {(date || (startTime && endTime)) && (
@@ -1055,7 +1180,7 @@ const HabitItem: React.FC<{ label: string, done: boolean, onClick: () => void, o
         >
           <Trash2 className="w-4 h-4" />
         </button>
-        {!isLocked && !done && (
+        {timeStatus === 'active' && !done && (
           <button 
             onClick={(e) => { e.stopPropagation(); onPlay(); }} 
             className="p-3 bg-brand-primary text-white rounded-2xl transition-all shadow-lg shadow-brand-primary/20 hover:opacity-90"

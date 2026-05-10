@@ -124,24 +124,14 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     const finalDuration = elapsed !== undefined ? elapsed : duration;
     setFinalElapsedSeconds(finalDuration);
 
-    // Mark task or habit as completed
+    // Mark task as completed (tasks auto-complete, habits do NOT)
     if (focusTarget) {
       if (focusTarget.type === 'task') {
         setTasks(tasks.map(t => t.id === focusTarget.id ? { ...t, completed: true } : t));
         try { await tasksApi.update(focusTarget.id, { completed: true }); } catch {}
-      } else if (focusTarget.type === 'habit') {
-        const today = new Date().toISOString().split('T')[0];
-        setHabits(habits.map(h => {
-          if (h.id === focusTarget.id) {
-            const completedDates = h.completedDates || [];
-            if (!completedDates.includes(today)) {
-              return { ...h, completedDates: [...completedDates, today] };
-            }
-          }
-          return h;
-        }));
-        try { await habitsApi.toggle(focusTarget.id, today); } catch {}
       }
+      // Habits: do NOT auto-complete. The user checks them off manually.
+      // Focus sessions accumulate throughout the day.
     }
 
     const newSession: FocusSession = {
