@@ -20,7 +20,12 @@ export default function GoalsView({ goals, setGoals, tasks, habits, sessions }: 
   const selectedGoal = goals.find(g => g.id === selectedGoalId);
 
   const goalTasks = tasks.filter(t => t.goalId === selectedGoalId);
-  const goalHabits = habits.filter(h => h.goalId === selectedGoalId);
+  const goalHabits = habits.filter(h => h.goalId === selectedGoalId).sort((a, b) => {
+    if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
+    if (a.startTime) return -1;
+    if (b.startTime) return 1;
+    return 0;
+  });
   const goalSessions = sessions.filter(s => s.goalId === selectedGoalId);
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

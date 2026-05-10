@@ -171,8 +171,15 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     return 0;
   });
 
+  const sortedHabitsList = [...habits].sort((a, b) => {
+    if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
+    if (a.startTime) return -1;
+    if (b.startTime) return 1;
+    return 0;
+  });
+
   const displayedTasks = selectedGoalId ? sortedTasks.filter(t => t.goalId === selectedGoalId) : sortedTasks.filter(t => !t.goalId);
-  const displayedHabits = selectedGoalId ? habits.filter(h => h.goalId === selectedGoalId) : habits.filter(h => !h.goalId);
+  const displayedHabits = selectedGoalId ? sortedHabitsList.filter(h => h.goalId === selectedGoalId) : sortedHabitsList.filter(h => !h.goalId);
 
   const toggleTask = async (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);

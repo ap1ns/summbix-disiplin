@@ -34,6 +34,11 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
     const matchesSearch = h.label.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesGoal = selectedGoalFilter === 'all' || h.goalId === selectedGoalFilter;
     return matchesSearch && matchesGoal;
+  }).sort((a, b) => {
+    if (a.startTime && b.startTime) return a.startTime.localeCompare(b.startTime);
+    if (a.startTime) return -1;
+    if (b.startTime) return 1;
+    return 0;
   });
 
   const toggleHabit = async (habitId: string) => {
