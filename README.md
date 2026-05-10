@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/README.png" width="100%" alt="Summbix Discipline Banner" />
+  <img src="/public/README.png" width="100%" alt="Summbix Discipline Banner" />
 
   # ✨ Summbix Discipline
   **Master Your Time. Elevate Your Potential.**
