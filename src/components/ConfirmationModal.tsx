@@ -47,7 +47,7 @@ export default function ConfirmationModal({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={onClose}
-              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md"
+              className="absolute inset-0 bg-brand-text/60 "
             />
             <motion.div 
               initial={{ scale: 0.9, opacity: 0, y: 20 }}

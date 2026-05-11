@@ -121,7 +121,7 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
 
           {/* Search Results Dropdown */}
           {isSearchFocused && searchQuery.length >= 2 && (
-            <div className="absolute top-full mt-4 left-0 w-full bg-white/90 backdrop-blur-3xl border border-white/40 rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50">
+            <div className="absolute top-full mt-4 left-0 w-full bg-white/90  border border-white/40 rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50">
               <div className="max-h-[32rem] overflow-y-auto p-4 custom-scrollbar">
                 {!hasResults && (
                   <div className="p-12 text-center">
@@ -192,7 +192,7 @@ export default function Header({ goals, tasks, notifications, onMarkRead, onNavi
           </button>
 
           {isNotifOpen && (
-            <div className="fixed inset-x-3 top-20 bottom-auto md:bottom-auto md:top-full md:mt-4 md:right-0 md:left-auto md:inset-x-auto md:absolute w-auto md:w-96 bg-white/95 backdrop-blur-3xl border border-white/40 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50 max-h-[70vh] md:max-h-none">
+            <div className="fixed inset-x-3 top-20 bottom-auto md:bottom-auto md:top-full md:mt-4 md:right-0 md:left-auto md:inset-x-auto md:absolute w-auto md:w-96 bg-white/95  border border-white/40 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] overflow-hidden z-50 max-h-[70vh] md:max-h-none">
               <div className="p-6 border-b border-brand-bg flex items-center justify-between bg-brand-bg/20">
                 <h3 className="text-xs font-black text-brand-text uppercase tracking-[0.3em]">Oracle Updates</h3>
                 {unreadCount > 0 && <span className="text-[10px] font-black bg-brand-primary text-white px-3 py-1 rounded-full uppercase tracking-widest">{unreadCount} New</span>}

@@ -109,7 +109,7 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout, onResetDat
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white/70 backdrop-blur-xl border border-white rounded-[2.5rem] shadow-xl overflow-hidden"
+        className="bg-white/70  border border-white rounded-[2.5rem] shadow-xl overflow-hidden"
       >
         {/* Header/Cover Area */}
         <div className="h-32 bg-gradient-to-r from-brand-primary/20 via-brand-orange/20 to-brand-primary/10 relative">
@@ -316,7 +316,7 @@ export function ProfileView({ profile, setProfile, isGuest, onLogout, onResetDat
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setShowDeleteModal(false)}
-                className="absolute inset-0 bg-brand-text/60 backdrop-blur-md"
+                className="absolute inset-0 bg-brand-text/60 "
               />
               
               <motion.div 

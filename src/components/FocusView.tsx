@@ -328,33 +328,8 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
   const progress = ((duration - timeLeft) / duration) * 100;
 
-  const dustEffectEnabled = true;
-  const DustEffect = () => (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{ 
-            x: Math.random() * 100 + "%", 
-            y: Math.random() * 100 + "%",
-            opacity: 0 
-          }}
-          animate={{ 
-            y: [null, "-10%"],
-            opacity: [0, 0.3, 0],
-            scale: [0.5, 1, 0.5]
-          }}
-          transition={{ 
-            duration: 10 + Math.random() * 20, 
-            repeat: Infinity, 
-            ease: "linear",
-            delay: Math.random() * 10
-          }}
-          className="absolute w-1 h-1 bg-brand-primary rounded-full blur-[1px]"
-        />
-      ))}
-    </div>
-  );
+  const dustEffectEnabled = false;
+  const DustEffect = () => null;
 
   return (
     <motion.div 
@@ -366,24 +341,13 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
       {/* Deep Immersive Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Ambient Summbix */ dustEffectEnabled && <DustEffect />}
-        <motion.div 
-          animate={{ 
-            scale: isActive ? [1, 1.2, 1] : 1,
-            opacity: isActive ? [0.15, 0.3, 0.15] : 0.05,
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        <div 
           className={cn(
             "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[150px] transition-colors duration-1000",
             isActive ? "bg-brand-primary/60" : "bg-brand-primary/10"
           )} 
         />
-        <motion.div 
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            x: [0, -40, 0],
-            y: [0, -20, 0],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        <div 
           className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-brand-blue/10 blur-[120px] rounded-full" 
         />
       </div>
@@ -395,7 +359,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
           onClick={onExit}
           className="flex items-center gap-3 text-brand-text-light hover:text-brand-primary transition-all group"
         >
-          <div className="w-10 h-10 rounded-full bg-white/60 border border-brand-primary/10 flex items-center justify-center group-hover:bg-white transition-all backdrop-blur-md shadow-sm">
+          <div className="w-10 h-10 rounded-full bg-white/95 border border-brand-primary/10 flex items-center justify-center group-hover:bg-white transition-all shadow-sm">
             <ChevronLeft className="w-5 h-5" />
           </div>
           <span className="font-bold text-xs uppercase tracking-widest hidden md:inline">Exit Sanctuary</span>
@@ -435,7 +399,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
               </motion.h1>
               
               {/* Progress Bar under timer */}
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-brand-primary/10 rounded-full overflow-hidden backdrop-blur-md">
+              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-brand-primary/10 rounded-full overflow-hidden">
                 <motion.div 
                   className="h-full bg-brand-primary shadow-[0_0_15px_rgba(227,133,105,0.4)]"
                   animate={{ width: `${progress}%` }}
@@ -461,7 +425,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
               The discipline shapes your summbix.
             </p>
             <div className="flex items-center gap-6">
-              <button onClick={resetTimer} className="px-10 py-5 rounded-[2rem] bg-white border border-brand-primary/10 hover:border-brand-primary/30 text-brand-text-light hover:text-brand-primary font-black uppercase tracking-[0.2em] text-xs transition-all shadow-sm backdrop-blur-md">
+              <button onClick={resetTimer} className="px-10 py-5 rounded-[2rem] bg-white border border-brand-primary/10 hover:border-brand-primary/30 text-brand-text-light hover:text-brand-primary font-black uppercase tracking-[0.2em] text-xs transition-all shadow-sm">
                 Another Session
               </button>
               <button onClick={onExit} className="px-10 py-5 rounded-[2rem] bg-brand-primary text-white font-black uppercase tracking-[0.2em] text-xs hover:opacity-90 shadow-lg shadow-brand-primary/30 transition-all">
@@ -479,7 +443,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
 
           {/* Existing Floating Dock (Condensed) */}
-          <div className="bg-white/60 backdrop-blur-3xl border border-brand-primary/10 rounded-full px-3 md:px-4 py-2 md:py-3 flex items-center gap-1.5 md:gap-2 shadow-[0_20px_50px_rgba(227,133,105,0.15)] max-w-full overflow-x-auto scrollbar-hide">
+          <div className="bg-white/95 border border-brand-primary/10 rounded-full px-3 md:px-4 py-2 md:py-3 flex items-center gap-1.5 md:gap-2 shadow-[0_20px_50px_rgba(227,133,105,0.15)] max-w-full overflow-x-auto scrollbar-hide">
             
             {/* Presets */}
             <div className="hidden md:flex items-center bg-brand-bg/50 rounded-full p-1 mr-4 border border-brand-primary/5">
@@ -545,7 +509,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100000] flex items-center justify-center p-6 bg-brand-text/40 backdrop-blur-md"
+            className="fixed inset-0 z-[100000] flex items-center justify-center p-6 bg-brand-text/80"
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
@@ -585,7 +549,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99999] bg-brand-text/40 backdrop-blur-xl flex items-center justify-center p-4 md:p-8 font-sans select-none"
+            className="fixed inset-0 z-[99999] bg-brand-text/80 flex items-center justify-center p-4 md:p-8 font-sans select-none"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}

@@ -18,7 +18,7 @@ type ViewMode = 'auth' | 'forgot' | 'verify';
 const LoadingOverlay = ({ status }: { status: string }) => (
   <motion.div 
     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-    className="fixed inset-0 z-[100] flex items-center justify-center bg-brand-bg/80 backdrop-blur-xl"
+    className="fixed inset-0 z-[100] flex items-center justify-center bg-brand-bg/95"
   >
     <div className="flex flex-col items-center gap-6">
       <div className="relative">
@@ -31,7 +31,7 @@ const LoadingOverlay = ({ status }: { status: string }) => (
       </div>
       <div className="text-center space-y-2">
         <h3 className="text-xl font-black text-brand-text uppercase tracking-widest">{status}</h3>
-        <p className="text-brand-text-light font-bold text-xs uppercase tracking-widest animate-pulse">Establishing Secure Node...</p>
+        <p className="text-brand-text-light font-bold text-xs uppercase tracking-widest">Establishing Secure Node...</p>
       </div>
     </div>
   </motion.div>
@@ -156,22 +156,8 @@ export default function Login({ onLogin }: LoginProps) {
       <div className="min-h-screen w-full bg-brand-bg flex items-center justify-center font-sans overflow-hidden p-6 relative">
         {/* Soft Atmospheric Background */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.2, 0.4, 0.2]
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-1/4 -right-1/4 w-[80%] h-[80%] bg-brand-primary/20 blur-[120px] rounded-full" 
-          />
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.3, 1],
-              opacity: [0.1, 0.3, 0.1]
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-1/4 -left-1/4 w-[70%] h-[70%] bg-brand-orange/20 blur-[100px] rounded-full" 
-          />
+          <div className="absolute -top-1/4 -right-1/4 w-[80%] h-[80%] bg-brand-primary/20 blur-[120px] rounded-full" />
+          <div className="absolute -bottom-1/4 -left-1/4 w-[70%] h-[70%] bg-brand-orange/20 blur-[100px] rounded-full" />
         </div>
 
         <div className="relative z-10 w-full max-w-sm flex flex-col min-h-[95vh]">
@@ -191,7 +177,7 @@ export default function Login({ onLogin }: LoginProps) {
                 if (view !== 'auth') setView('auth');
                 else if (!isLogin) setIsLogin(true);
               }}
-              className="w-10 h-10 bg-white/60 border border-white rounded-xl flex items-center justify-center text-brand-text/60 shadow-sm backdrop-blur-md"
+              className="w-10 h-10 bg-white/60 border border-white rounded-xl flex items-center justify-center text-brand-text/60 shadow-sm "
             >
               <ArrowLeft className="w-5 h-5" />
             </motion.button>
@@ -211,11 +197,11 @@ export default function Login({ onLogin }: LoginProps) {
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.1 }}
-                  className="relative w-full aspect-video mb-10 rounded-[2.5rem] overflow-hidden border border-white bg-white/40 p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.05)] backdrop-blur-xl"
+                  className="relative w-full aspect-video mb-10 rounded-[2.5rem] overflow-hidden border border-white bg-white/40 p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.05)] "
                 >
                   <img
-                    src="https://i.pinimg.com/originals/0b/9d/d1/0b9dd1013d1a1e8e1a5c91f0967dcac9.gif"
-                    alt="Art"
+                    src="/Banner.png"
+                    alt="Summbix Banner"
                     className="w-full h-full object-cover rounded-[2rem]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-bg/60 via-transparent to-transparent" />
@@ -236,7 +222,7 @@ export default function Login({ onLogin }: LoginProps) {
                         <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-light/30 group-focus-within:text-brand-primary transition-colors" />
                         <input
                           type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="FULL NAME"
-                          className="w-full bg-white/70 backdrop-blur-md border border-white rounded-2xl py-5 pl-14 pr-6 text-sm font-bold text-brand-text placeholder:text-brand-text-light/30 focus:outline-none focus:border-brand-primary/20 transition-all shadow-sm"
+                          className="w-full bg-white/70  border border-white rounded-2xl py-5 pl-14 pr-6 text-sm font-bold text-brand-text placeholder:text-brand-text-light/30 focus:outline-none focus:border-brand-primary/20 transition-all shadow-sm"
                           required={!isLogin}
                         />
                       </div>
@@ -248,7 +234,7 @@ export default function Login({ onLogin }: LoginProps) {
                       <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-light/30 group-focus-within:text-brand-primary transition-colors" />
                       <input
                         type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="EMAIL ADDRESS"
-                        className="w-full bg-white/70 backdrop-blur-md border border-white rounded-2xl py-5 pl-14 pr-6 text-sm font-bold text-brand-text placeholder:text-brand-text-light/30 focus:outline-none focus:border-brand-primary/20 transition-all shadow-sm"
+                        className="w-full bg-white/70  border border-white rounded-2xl py-5 pl-14 pr-6 text-sm font-bold text-brand-text placeholder:text-brand-text-light/30 focus:outline-none focus:border-brand-primary/20 transition-all shadow-sm"
                         required
                       />
                     </div>
@@ -259,7 +245,7 @@ export default function Login({ onLogin }: LoginProps) {
                       <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-light/30 group-focus-within:text-brand-primary transition-colors" />
                       <input
                         type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="PASSWORD"
-                        className="w-full bg-white/70 backdrop-blur-md border border-white rounded-2xl py-5 pl-14 pr-14 text-sm font-bold text-brand-text placeholder:text-brand-text-light/30 focus:outline-none focus:border-brand-primary/20 transition-all shadow-sm"
+                        className="w-full bg-white/70  border border-white rounded-2xl py-5 pl-14 pr-14 text-sm font-bold text-brand-text placeholder:text-brand-text-light/30 focus:outline-none focus:border-brand-primary/20 transition-all shadow-sm"
                         required
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-brand-text-light/30 hover:text-brand-primary">
@@ -309,14 +295,14 @@ export default function Login({ onLogin }: LoginProps) {
                       <motion.button
                         whileTap={{ scale: 0.95 }}
                         type="button" onClick={() => onLogin("Guest User", true)}
-                        className="bg-white/60 backdrop-blur-md border border-white text-brand-text/60 py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-white transition-all"
+                        className="bg-white/60  border border-white text-brand-text/60 py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-white transition-all"
                       >
                         Guest
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.95 }}
                         type="button"
-                        className="bg-white/60 backdrop-blur-md border border-white text-brand-text/60 py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-white transition-all"
+                        className="bg-white/60  border border-white text-brand-text/60 py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-white transition-all"
                       >
                         Google
                       </motion.button>
@@ -324,7 +310,7 @@ export default function Login({ onLogin }: LoginProps) {
                         <motion.button
                           whileTap={{ scale: 0.95 }}
                           type="button" onClick={handleDevLogin}
-                          className="bg-brand-primary/10 backdrop-blur-md border border-brand-primary/20 text-brand-primary py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-brand-primary/20 transition-all flex items-center justify-center gap-1"
+                          className="bg-brand-primary/10  border border-brand-primary/20 text-brand-primary py-4 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-sm hover:bg-brand-primary/20 transition-all flex items-center justify-center gap-1"
                         >
                           <Zap className="w-3 h-3" /> Dev
                         </motion.button>
@@ -368,7 +354,7 @@ export default function Login({ onLogin }: LoginProps) {
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                       placeholder="000000"
-                      className="w-full bg-white/70 backdrop-blur-md border border-white rounded-3xl py-8 text-center text-5xl font-black tracking-[0.3em] text-brand-primary focus:outline-none focus:ring-8 focus:ring-brand-primary/5 focus:border-brand-primary/20 transition-all shadow-sm"
+                      className="w-full bg-white/70  border border-white rounded-3xl py-8 text-center text-5xl font-black tracking-[0.3em] text-brand-primary focus:outline-none focus:ring-8 focus:ring-brand-primary/5 focus:border-brand-primary/20 transition-all shadow-sm"
                     />
                   </div>
 
@@ -412,7 +398,7 @@ export default function Login({ onLogin }: LoginProps) {
                 </div>
 
                 {isSubmitted ? (
-                  <div className="bg-white/60 backdrop-blur-md rounded-[2.5rem] p-8 text-center space-y-6 border border-white shadow-sm">
+                  <div className="bg-white/60  rounded-[2.5rem] p-8 text-center space-y-6 border border-white shadow-sm">
                     <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm">
                       <Check className="w-8 h-8 text-green-500" />
                     </div>
@@ -433,7 +419,7 @@ export default function Login({ onLogin }: LoginProps) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="EMAIL@ADDRESS.COM"
-                        className="w-full bg-white/70 backdrop-blur-md border border-white rounded-2xl py-5 px-6 text-brand-text font-bold focus:outline-none focus:ring-4 focus:ring-brand-primary/5 shadow-sm"
+                        className="w-full bg-white/70  border border-white rounded-2xl py-5 px-6 text-brand-text font-bold focus:outline-none focus:ring-4 focus:ring-brand-primary/5 shadow-sm"
                         required
                       />
                     </div>
@@ -483,7 +469,7 @@ export default function Login({ onLogin }: LoginProps) {
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative w-full max-w-6xl aspect-[16/9] flex rounded-[3rem] overflow-hidden bg-white/40 backdrop-blur-2xl border border-white shadow-[0_40px_100px_rgba(0,0,0,0.05)]"
+        className="relative w-full max-w-6xl aspect-[16/9] flex rounded-[3rem] overflow-hidden bg-white/95 border border-white shadow-[0_40px_100px_rgba(0,0,0,0.05)]"
       >
         {/* Sliding Overlay Container */}
         <motion.div 
@@ -493,14 +479,15 @@ export default function Login({ onLogin }: LoginProps) {
         >
           <div className="w-full h-full p-8 md:p-12">
             <div className="w-full h-full bg-black rounded-[2.5rem] relative overflow-hidden shadow-2xl">
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-              <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-[#222222] mix-blend-multiply" />
+              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+              <img src="/LOGO_Maskot_body.png" className="absolute inset-0 w-full h-full object-cover opacity-50" alt="Mascot" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/80" />
               
               <div className="relative z-10 h-full flex flex-col items-center justify-center text-white p-12 text-center space-y-8">
                 <motion.div 
                   initial={false}
                   animate={{ rotate: isLogin ? 0 : 180 }}
-                  className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center p-5"
+                  className="w-20 h-20 bg-white/20  rounded-3xl flex items-center justify-center p-5"
                 >
                   <img src="/logo_putih.png" className="w-full h-full object-contain" alt="Summbix" />
                 </motion.div>
@@ -564,9 +551,12 @@ export default function Login({ onLogin }: LoginProps) {
                     <div className="relative">
                       <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-light/30" />
                       <input 
-                        type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
-                        className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all"
+                        type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
+                        className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl py-4 pl-12 pr-14 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all"
                       />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-brand-text-light/30 hover:text-brand-primary transition-colors">
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -611,9 +601,12 @@ export default function Login({ onLogin }: LoginProps) {
                     <div className="relative">
                       <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-light/30" />
                       <input 
-                        type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
-                        className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all"
+                        type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
+                        className="w-full bg-white/50 border border-brand-primary/10 rounded-2xl py-4 pl-12 pr-14 text-sm font-bold text-brand-text focus:outline-none focus:ring-4 focus:ring-brand-primary/5 focus:bg-white transition-all"
                       />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-brand-text-light/30 hover:text-brand-primary transition-colors">
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -666,7 +659,7 @@ export default function Login({ onLogin }: LoginProps) {
         {view !== 'auth' && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-brand-bg/60 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-brand-bg/95"
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}

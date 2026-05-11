@@ -129,7 +129,7 @@ export default function HistoryView({ tasks, sessions, goals }: HistoryViewProps
                 <div key={date} className="relative mb-20 last:mb-0">
                   {/* Date Badge */}
                   <div className="flex items-center justify-center mb-12 sticky top-0 z-20">
-                    <div className="bg-brand-text text-white px-8 py-3 rounded-full shadow-2xl shadow-brand-text/20 backdrop-blur-xl">
+                    <div className="bg-brand-text text-white px-8 py-3 rounded-full shadow-2xl shadow-brand-text/20 ">
                       <span className="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3">
                         <Calendar className="w-4 h-4 text-brand-primary" />
                         {new Date(date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}

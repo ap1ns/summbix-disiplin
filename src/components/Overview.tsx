@@ -443,18 +443,10 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
 
   return (
     <div className="w-full h-full grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 relative pt-4">
-      {/* Decorative Blob Backgrounds - Hidden on mobile for performance */}
+      {/* Decorative Blob Backgrounds - Disabled on mobile for performance */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
-        <motion.div 
-          animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
-          transition={{ duration: 20, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-primary/5 blur-[120px] rounded-full" 
-        />
-        <motion.div 
-          animate={{ x: [0, -80, 0], y: [0, 100, 0] }}
-          transition={{ duration: 25, repeat: Infinity }}
-          className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-blue/5 blur-[100px] rounded-full" 
-        />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-blue/5 blur-[100px] rounded-full" />
       </div>
 
       {/* Left Column - Main Stats & Goals */}
@@ -800,8 +792,9 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
 
         {/* Daily Motivation */}
         <section className="bg-brand-bg border border-brand-primary/10 rounded-[2.5rem] p-8 relative overflow-hidden shadow-xl">
-          <Quote className="absolute -top-6 -right-6 w-32 h-32 text-brand-primary/5 rotate-12" />
-          <p className="text-brand-text italic text-lg relative z-10 leading-relaxed font-medium">
+          <img src="/LOGO_Maskot _kepala.png" className="absolute -bottom-2 -right-4 w-32 h-32 object-contain opacity-10 transform -rotate-6 pointer-events-none" alt="Mascot" />
+          <Quote className="absolute -top-6 -right-6 w-32 h-32 text-brand-primary/5 rotate-12 pointer-events-none" />
+          <p className="text-brand-text italic text-lg relative z-10 leading-relaxed font-medium max-w-[85%]">
             "Discipline is the bridge between goals and accomplishment."
           </p>
           <div className="mt-6 flex items-center gap-3 relative z-10">
@@ -918,13 +911,13 @@ const GoalCard: React.FC<{ goal: Goal, isSelected: boolean, onSelect: (id: strin
       whileHover={{ y: -5, scale: 1.01 }}
       className={cn(
         "relative rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 transition-all cursor-pointer group overflow-hidden border shadow-2xl",
-        isSelected ? "border-brand-primary/40 bg-white ring-4 md:ring-8 ring-brand-primary/5" : "border-brand-primary/5 hover:border-brand-primary/20 bg-white/60 backdrop-blur-md",
+        isSelected ? "border-brand-primary/40 bg-white ring-4 md:ring-8 ring-brand-primary/5" : "border-brand-primary/5 hover:border-brand-primary/20 bg-white",
         integrityScore >= 100 && !isCompleted && "ring-2 ring-brand-green/20"
       )}
     >
       {/* Integrity Glow */}
       {integrityScore >= 100 && !isCompleted && (
-        <div className="absolute inset-0 bg-brand-green/[0.02] pointer-events-none animate-pulse" />
+        <div className="absolute inset-0 bg-brand-green/[0.02] pointer-events-none" />
       )}
 
       <div className="absolute top-0 right-0 w-32 h-32 opacity-[0.03] group-hover:opacity-[0.1] transition-all transform group-hover:scale-150 duration-1000">
@@ -959,7 +952,7 @@ const GoalCard: React.FC<{ goal: Goal, isSelected: boolean, onSelect: (id: strin
           <p className="text-sm text-brand-text-light line-clamp-2 leading-relaxed font-medium opacity-80">{goal.description}</p>
         </div>
         
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0 bg-brand-bg/90 backdrop-blur-md rounded-2xl p-1.5 border border-brand-primary/10 shadow-lg">
+        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0 bg-white/95 rounded-2xl p-1.5 border border-brand-primary/10 shadow-lg">
           <button 
             onClick={(e) => { e.stopPropagation(); onEdit(); }}
             className="p-3 hover:bg-white rounded-xl transition-all text-brand-text-light hover:text-brand-primary shadow-sm"
@@ -1037,9 +1030,7 @@ const TimelineBlock: React.FC<{ block: TimeBlock, goals: Goal[] }> = ({ block, g
       className="flex gap-6 group"
     >
       <div className="flex flex-col items-center">
-        <motion.div 
-          animate={isActive ? { scale: [1, 1.2, 1] } : {}}
-          transition={{ repeat: Infinity, duration: 2 }}
+        <div 
           className={cn(
             "w-4 h-4 rounded-full border-4 border-white shadow-xl z-10",
             isCompleted ? "bg-brand-green" : isMissed ? "bg-brand-red" : isActive ? "bg-brand-primary shadow-[0_0_15px_rgba(227,133,105,0.5)]" : "bg-brand-bg border-brand-primary/10"
@@ -1049,7 +1040,7 @@ const TimelineBlock: React.FC<{ block: TimeBlock, goals: Goal[] }> = ({ block, g
       </div>
       <div className={cn(
         "flex-1 p-6 rounded-[2.5rem] border transition-all shadow-xl mb-8 relative overflow-hidden",
-        isActive ? "bg-white border-brand-primary/30 ring-8 ring-brand-primary/5 shadow-brand-primary/10" : "bg-white/60 backdrop-blur-md border-brand-primary/5 hover:bg-white"
+        isActive ? "bg-white border-brand-primary/30 ring-8 ring-brand-primary/5 shadow-brand-primary/10" : "bg-white border-brand-primary/5 hover:bg-white"
       )}>
         {isActive && <div className="absolute left-0 top-0 bottom-0 w-2 bg-brand-primary animate-pulse" />}
         <div className="flex items-start justify-between">
@@ -1057,13 +1048,11 @@ const TimelineBlock: React.FC<{ block: TimeBlock, goals: Goal[] }> = ({ block, g
             {block.startTime} — {block.endTime}
           </span>
           {isActive && (
-            <motion.div 
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
+            <div 
               className="px-3 py-1 rounded-full bg-brand-primary text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-brand-primary/20"
             >
               Live Mission
-            </motion.div>
+            </div>
           )}
         </div>
         <h5 className={cn("text-lg font-black mt-4 tracking-tight", isActive ? "text-brand-primary" : "text-brand-text")}>
@@ -1239,7 +1228,7 @@ export function GoalModal({ isOpen, onClose, onAdd, initialGoal }: { isOpen: boo
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md" 
+              className="absolute inset-0 bg-brand-text/80" 
               onClick={onClose} 
             />
             <motion.div 
@@ -1344,7 +1333,7 @@ export function TaskModal({ isOpen, onClose, onAdd, initialTask, goals, defaultG
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md" 
+              className="absolute inset-0 bg-brand-text/80" 
               onClick={onClose} 
             />
             <motion.div 
@@ -1454,7 +1443,7 @@ export function HabitModal({ isOpen, onClose, onAdd, initialHabit, goals, defaul
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-text/60 backdrop-blur-md" 
+              className="absolute inset-0 bg-brand-text/80" 
               onClick={onClose} 
             />
             <motion.div 

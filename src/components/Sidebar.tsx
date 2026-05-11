@@ -18,29 +18,8 @@ interface SidebarProps {
  * Makes icons pull towards the cursor for a premium tactile feel
  */
 function MagneticButton({ children, onClick, isActive, label }: { children: React.ReactNode, onClick: () => void, isActive: boolean, label?: string, key?: string }) {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { damping: 15, stiffness: 150 };
-  const tx = useSpring(mouseX, springConfig);
-  const ty = useSpring(mouseY, springConfig);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - (rect.left + rect.width / 2);
-    const y = e.clientY - (rect.top + rect.height / 2);
-    mouseX.set(x * 0.4);
-    mouseY.set(y * 0.4);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
   const handleTap = () => {
     onClick();
-    // Subtle haptic vibration simulation
     if (window.navigator.vibrate) {
       window.navigator.vibrate(5);
     }
@@ -49,12 +28,10 @@ function MagneticButton({ children, onClick, isActive, label }: { children: Reac
   return (
     <div className="relative group/mag">
       <motion.button
-        style={{ x: tx, y: ty }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
         onClick={handleTap}
         whileTap={{ scale: 0.85, rotate: [0, -5, 5, 0] }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        whileHover={{ scale: 1.05 }}
         className={cn(
           "relative z-10 w-16 h-16 rounded-[2rem] flex items-center justify-center transition-all duration-300",
           isActive ? "text-white" : "text-brand-text-light hover:text-brand-primary"
@@ -137,18 +114,11 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
         <motion.nav
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="w-[100px] h-[96vh] bg-white/70 backdrop-blur-3xl rounded-[4rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] flex flex-col py-10 items-center relative overflow-visible border border-white/50"
+          className="w-[100px] h-[96vh] bg-white/95 rounded-[4rem] shadow-[0_30px_100px_rgba(0,0,0,0.1)] flex flex-col py-10 items-center relative overflow-visible border border-white/50"
         >
           {/* Neural Network Particles Decoration */}
           <div className="absolute inset-0 overflow-hidden rounded-[4rem] pointer-events-none opacity-20">
-            <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 90, 180, 270, 360],
-              }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-20 -left-20 w-40 h-40 bg-brand-primary/20 blur-3xl rounded-full"
-            />
+            <div className="absolute -top-20 -left-20 w-40 h-40 bg-brand-primary/20 blur-3xl rounded-full" />
           </div>
 
           {/* Logo Area */}
@@ -203,30 +173,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
               <Timer className="w-8 h-8 relative z-10" />
               <div className="absolute inset-0 bg-brand-primary opacity-0" />
 
-              {/* Particle System for Focus Button */}
-              <AnimatePresence>
-                {currentView === 'focus' && (
-                  <>
-                    <motion.div
-                      layoutId="focus-ring-ext"
-                      className="absolute -inset-2 border border-brand-primary/30 rounded-[3rem] animate-[ping_4s_infinite]"
-                    />
-                    {[...Array(4)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        animate={{
-                          y: [-20, -60],
-                          x: [(i - 1.5) * 15, (i - 1.5) * 25],
-                          opacity: [0, 1, 0],
-                          scale: [0, 1, 0]
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
-                        className="absolute w-1 h-1 bg-brand-primary rounded-full blur-[1px]"
-                      />
-                    ))}
-                  </>
-                )}
-              </AnimatePresence>
+              {/* Particle System for Focus Button (Disabled for performance) */}
             </motion.button>
           </div>
         </motion.nav>
@@ -242,7 +189,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsMoreOpen(false)}
-                className="fixed inset-0 z-10 bg-brand-text/40 backdrop-blur-md"
+                className="fixed inset-0 z-10 bg-brand-text/80"
               />
               <motion.div
                 initial={{ y: '110%', opacity: 0 }}
@@ -251,7 +198,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 className="fixed bottom-24 left-4 right-4 z-20"
               >
-                <div className="bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-[2.5rem] overflow-hidden p-6">
+                <div className="bg-white/95 border border-white/50 shadow-2xl rounded-[2.5rem] overflow-hidden p-6">
                   <div className="flex items-center justify-between mb-6 px-2">
                     <h3 className="text-xs font-black text-brand-primary uppercase tracking-[0.2em]">Modules</h3>
                     <button onClick={() => setIsMoreOpen(false)} className="text-brand-text-light hover:text-brand-primary">
@@ -283,7 +230,7 @@ export default function Sidebar({ currentView, setView }: SidebarProps) {
           )}
         </AnimatePresence>
 
-        <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white h-[85px] flex items-center justify-around relative px-2">
+        <div className="bg-white/95 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white h-[85px] flex items-center justify-around relative px-2">
           {mobileNavPrimary.map((item) => {
             const Icon = item.icon;
             const isActive = item.isMore ? isMoreActive : currentView === item.id;

@@ -337,13 +337,13 @@ export default function App() {
             exit={{ y: -100, opacity: 0, scale: 0.85 }}
             className="fixed top-0 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-sm"
           >
-            <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-3xl p-5 shadow-2xl flex items-center gap-4">
+            <div className="bg-black/95 border border-white/20 rounded-3xl p-5 shadow-2xl flex items-center gap-4">
               {/* Icon */}
               <div className={cn(
                 'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg',
                 activeToast.type === 'task' ? 'bg-brand-blue text-white' :
-                activeToast.type === 'goal' ? 'bg-brand-green text-white' :
-                'bg-brand-primary text-white'
+                  activeToast.type === 'goal' ? 'bg-brand-green text-white' :
+                    'bg-brand-primary text-white'
               )}>
                 {activeToast.type === 'task' && <CheckCircle2 className="w-6 h-6" />}
                 {activeToast.type === 'goal' && <Target className="w-6 h-6" />}
@@ -405,16 +405,8 @@ export default function App() {
 
               {/* Decorative background — disabled on mobile for performance */}
               <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden hidden md:block">
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 180, 270, 360] }}
-                  transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                  className="absolute -top-[20%] -right-[10%] w-[80%] h-[80%] bg-brand-primary/5 blur-[120px] rounded-full"
-                />
-                <motion.div
-                  animate={{ scale: [1.2, 1, 1.2], rotate: [360, 270, 180, 90, 0] }}
-                  transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-                  className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[70%] bg-brand-blue/5 blur-[100px] rounded-full"
-                />
+                <div className="absolute -top-[20%] -right-[10%] w-[80%] h-[80%] bg-brand-primary/5 blur-[120px] rounded-full" />
+                <div className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[70%] bg-brand-blue/5 blur-[100px] rounded-full" />
               </div>
               <div className="absolute inset-0 bg-grain opacity-20 pointer-events-none" />
 
