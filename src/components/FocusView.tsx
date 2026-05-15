@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react'; // Correctly importing from motion/react as instructed in environment file
-import { Play, Pause, Square, RefreshCcw, Bell, Target, ChevronLeft, CheckCircle2, Music, Volume2, VolumeX, Plus, Trash2, Upload } from 'lucide-react';
+import { Play, Pause, Square, RefreshCcw, Bell, Target, ChevronLeft, CheckCircle2, Music, Volume2, VolumeX, Plus, Trash2, Upload, Infinity, Settings2 } from 'lucide-react';
 import { Goal, FocusSession, Soundscape, Task, Habit } from '../types';
 import { cn, formatDuration } from '../lib/utils';
 import { sessionsApi, tasksApi, habitsApi } from '../lib/api';
@@ -28,6 +28,10 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
   const [isFinished, setIsFinished] = useState(false);
   const [showResumePopup, setShowResumePopup] = useState(false);
   const [finalElapsedSeconds, setFinalElapsedSeconds] = useState(0);
+  const [isUnlimitedMode, setIsUnlimitedMode] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customValue, setCustomValue] = useState('25');
 
   useEffect(() => {
     const savedTime = localStorage.getItem('summbix_focus_timeLeft');
@@ -95,8 +99,10 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     setIsActive(!isActive);
     if (!isActive) {
       setHasStarted(true);
-      localStorage.setItem('summbix_focus_duration', duration.toString());
-      localStorage.setItem('summbix_focus_timeLeft', timeLeft.toString());
+      if (!isUnlimitedMode) {
+        localStorage.setItem('summbix_focus_duration', duration.toString());
+        localStorage.setItem('summbix_focus_timeLeft', timeLeft.toString());
+      }
       if (focusTarget) {
         localStorage.setItem('summbix_focus_target', JSON.stringify(focusTarget));
       }
@@ -107,6 +113,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     setIsActive(false);
     setHasStarted(false);
     setTimeLeft(duration);
+    setElapsedTime(0);
     setIsFinished(false);
     localStorage.removeItem('summbix_focus_timeLeft');
     localStorage.removeItem('summbix_focus_duration');
@@ -121,7 +128,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     localStorage.removeItem('summbix_focus_duration');
     localStorage.removeItem('summbix_focus_target');
     
-    const finalDuration = elapsed !== undefined ? elapsed : duration;
+    const finalDuration = elapsed !== undefined ? elapsed : (isUnlimitedMode ? elapsedTime : duration);
     setFinalElapsedSeconds(finalDuration);
 
     // Mark task as completed (tasks auto-complete, habits do NOT)
@@ -164,10 +171,28 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
     const secs = mins * 60;
     setDuration(secs);
     setTimeLeft(secs);
+    setElapsedTime(0);
+    setIsUnlimitedMode(false);
     setIsActive(false);
     setHasStarted(false);
     localStorage.setItem('summbix_focus_duration', secs.toString());
     localStorage.setItem('summbix_focus_timeLeft', secs.toString());
+  };
+
+  const toggleUnlimited = () => {
+    setIsUnlimitedMode(!isUnlimitedMode);
+    setElapsedTime(0);
+    setIsActive(false);
+    setHasStarted(false);
+  };
+
+  const handleCustomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const mins = parseInt(customValue);
+    if (!isNaN(mins) && mins > 0) {
+      setPreset(mins);
+      setShowCustomInput(false);
+    }
   };
 
   const saveCustomSounds = (sounds: Soundscape[]) => {
@@ -308,23 +333,29 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
   }, []);
 
   useEffect(() => {
-    if (isActive && timeLeft > 0) {
+    if (isActive) {
       timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          const next = prev - 1;
-          localStorage.setItem('summbix_focus_timeLeft', next.toString());
-          return next;
-        });
+        if (isUnlimitedMode) {
+          setElapsedTime(prev => prev + 1);
+        } else {
+          setTimeLeft((prev) => {
+            if (prev <= 1) {
+              handleComplete(duration);
+              return 0;
+            }
+            const next = prev - 1;
+            localStorage.setItem('summbix_focus_timeLeft', next.toString());
+            return next;
+          });
+        }
       }, 1000);
-    } else if (timeLeft === 0 && hasStarted) {
-      handleComplete(duration);
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     }
-  }, [isActive, timeLeft, hasStarted]);
+  }, [isActive, isUnlimitedMode, duration]);
 
   const progress = ((duration - timeLeft) / duration) * 100;
 
@@ -395,15 +426,28 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
                 layoutId="timer-text"
                 className="text-[15vw] md:text-[22vw] font-black tracking-tighter leading-none tabular-nums text-transparent bg-clip-text bg-gradient-to-b from-brand-text via-brand-text to-brand-text/10 drop-shadow-2xl pb-4 lg:pb-8 px-4 md:px-8"
               >
-                {formatDuration(timeLeft)}
+                {isUnlimitedMode ? formatDuration(elapsedTime) : formatDuration(timeLeft)}
               </motion.h1>
               
               {/* Progress Bar under timer */}
               <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-brand-primary/10 rounded-full overflow-hidden">
                 <motion.div 
                   className="h-full bg-brand-primary shadow-[0_0_15px_rgba(227,133,105,0.4)]"
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 1, ease: "linear" }}
+                  animate={isUnlimitedMode && isActive ? { 
+                    x: ["-100%", "100%"],
+                    width: ["20%", "20%"]
+                  } : { 
+                    width: `${progress}%`,
+                    x: 0
+                  }}
+                  transition={isUnlimitedMode && isActive ? { 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    ease: "linear" 
+                  } : { 
+                    duration: 1, 
+                    ease: "linear" 
+                  }}
                 />
               </div>
             </div>
@@ -443,23 +487,80 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
 
           {/* Existing Floating Dock (Condensed) */}
-          <div className="bg-white/95 border border-brand-primary/10 rounded-full px-3 md:px-4 py-2 md:py-3 flex items-center gap-1.5 md:gap-2 shadow-[0_20px_50px_rgba(227,133,105,0.15)] max-w-full overflow-x-auto scrollbar-hide">
+          <div className="bg-white/95 border border-brand-primary/10 rounded-full px-3 md:px-4 py-2 md:py-3 flex items-center gap-1.5 md:gap-2 shadow-[0_20px_50px_rgba(227,133,105,0.15)] max-w-[95vw] md:max-w-full flex-wrap md:flex-nowrap justify-center">
             
             {/* Presets */}
-            <div className="hidden md:flex items-center bg-brand-bg/50 rounded-full p-1 mr-4 border border-brand-primary/5">
-              {[25, 45, 60, 90].map(mins => (
+            <div className="flex items-center bg-brand-bg/50 rounded-full p-1 mr-4 border border-brand-primary/5">
+              {[25, 45, 60].map(mins => (
                 <button
                   key={mins}
                   onClick={() => setPreset(mins)}
                   disabled={isActive}
                   className={cn(
-                    "w-12 h-10 rounded-full text-xs font-black transition-all flex items-center justify-center",
-                    duration === mins * 60 ? "bg-white text-brand-primary shadow-sm border border-brand-primary/10" : "text-brand-text-light hover:text-brand-primary disabled:opacity-30 disabled:hover:text-brand-text-light"
+                    "w-10 h-10 rounded-full text-xs font-black transition-all flex items-center justify-center",
+                    !isUnlimitedMode && duration === mins * 60 ? "bg-white text-brand-primary shadow-sm border border-brand-primary/10" : "text-brand-text-light hover:text-brand-primary disabled:opacity-30"
                   )}
                 >
                   {mins}
                 </button>
               ))}
+              
+              {/* Unlimited Toggle */}
+              <button
+                onClick={toggleUnlimited}
+                disabled={isActive}
+                className={cn(
+                  "w-10 h-10 rounded-full transition-all flex items-center justify-center",
+                  isUnlimitedMode ? "bg-white text-brand-primary shadow-sm border border-brand-primary/10" : "text-brand-text-light hover:text-brand-primary disabled:opacity-30"
+                )}
+                title="Unlimited Mode"
+              >
+                <Infinity className="w-4 h-4" />
+              </button>
+
+              {/* Custom Input Toggle */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowCustomInput(!showCustomInput)}
+                  disabled={isActive}
+                  className={cn(
+                    "w-10 h-10 rounded-full transition-all flex items-center justify-center",
+                    showCustomInput ? "bg-brand-primary/10 text-brand-primary" : "text-brand-text-light hover:text-brand-primary disabled:opacity-30"
+                  )}
+                >
+                  <Settings2 className="w-4 h-4" />
+                </button>
+
+                <AnimatePresence>
+                  {showCustomInput && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 bg-white border border-brand-primary/10 rounded-2xl p-3 shadow-xl z-[60] flex items-center gap-2"
+                    >
+                      <form onSubmit={handleCustomSubmit} className="flex items-center gap-2">
+                        <input 
+                          type="number" 
+                          value={customValue}
+                          onChange={(e) => setCustomValue(e.target.value)}
+                          className="w-16 h-10 bg-brand-bg rounded-xl px-3 text-sm font-black text-brand-text outline-none focus:ring-2 ring-brand-primary/20"
+                          min="1"
+                          max="999"
+                          autoFocus
+                        />
+                        <span className="text-[10px] font-black text-brand-text-light uppercase tracking-widest mr-1">Min</span>
+                        <button 
+                          type="submit"
+                          className="h-10 px-4 bg-brand-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest"
+                        >
+                          Set
+                        </button>
+                      </form>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Controls */}
@@ -482,7 +583,7 @@ export default function FocusView({ onExit, goals, sessions, setSessions, focusT
 
             {hasStarted && (
               <button 
-                onClick={() => handleComplete(duration - timeLeft)}
+                onClick={() => handleComplete(isUnlimitedMode ? elapsedTime : (duration - timeLeft))}
                 className="px-6 h-12 rounded-full bg-brand-green text-white font-black uppercase tracking-[0.1em] text-[10px] hover:opacity-90 shadow-lg shadow-brand-green/20 transition-all flex items-center justify-center gap-2"
               >
                 <CheckCircle2 className="w-4 h-4" />
