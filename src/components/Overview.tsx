@@ -37,6 +37,7 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [resetModal, setResetModal] = useState<{ isOpen: boolean, type: 'task' | 'habit', id: string } | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, type: 'task' | 'habit' | 'goal', id: string, title?: string } | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -334,6 +335,32 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     setResetModal(null);
   };
 
+  const confirmRemoveCheckOnly = async () => {
+    if (!resetModal) return;
+    if (resetModal.type === 'task') {
+      setTasks(tasks.map(t => t.id === resetModal.id ? { ...t, completed: false } : t));
+      if (!isGuest) {
+        try {
+          await tasksApi.update(resetModal.id, { completed: false });
+        } catch {}
+      }
+    } else {
+      setHabits(habits.map(h => {
+        if (h.id === resetModal.id) {
+          const dates = h.completedDates || [];
+          return { ...h, completedDates: dates.filter(d => d !== nowDateStrLocal) };
+        }
+        return h;
+      }));
+      if (!isGuest) {
+        try {
+          await habitsApi.toggle(resetModal.id, nowDateStrLocal);
+        } catch {}
+      }
+    }
+    setResetModal(null);
+  };
+
   const handleAddHabit = async (label: string, goalId: string, startTime?: string, endTime?: string) => {
     if (editingHabit) {
       setHabits(habits.map(h => h.id === editingHabit.id ? { ...h, label, goalId, startTime, endTime } as any : h));
@@ -378,13 +405,13 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     setIsTaskModalOpen(false);
   };
 
-  const handleDeleteTask = async (id: string) => {
-    setTasks(tasks.filter(t => t.id !== id));
-    if (!isGuest) { try { await tasksApi.remove(id); } catch {} }
+  const handleDeleteTask = (id: string) => {
+    const task = tasks.find(t => t.id === id);
+    setDeleteModal({ isOpen: true, type: 'task', id, title: task?.title });
   };
-  const handleDeleteHabit = async (id: string) => {
-    setHabits(habits.filter(h => h.id !== id));
-    if (!isGuest) { try { await habitsApi.remove(id); } catch {} }
+  const handleDeleteHabit = (id: string) => {
+    const habit = habits.find(h => h.id === id);
+    setDeleteModal({ isOpen: true, type: 'habit', id, title: habit?.label });
   };
 
   const handleAddGoal = async (title: string, description: string, deadline: string, color: string, startDate: string) => {
@@ -409,10 +436,26 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
     setIsGoalModalOpen(false);
   };
 
-  const handleDeleteGoal = async (id: string) => {
-    setGoals(goals.filter(g => g.id !== id));
-    if (selectedGoalId === id) setSelectedGoalId(null);
-    if (!isGuest) { try { await goalsApi.remove(id); } catch {} }
+  const handleDeleteGoal = (id: string) => {
+    const goal = goals.find(g => g.id === id);
+    setDeleteModal({ isOpen: true, type: 'goal', id, title: goal?.title });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteModal) return;
+    const { type, id } = deleteModal;
+    if (type === 'task') {
+      setTasks(tasks.filter(t => t.id !== id));
+      if (!isGuest) { try { await tasksApi.remove(id); } catch {} }
+    } else if (type === 'habit') {
+      setHabits(habits.filter(h => h.id !== id));
+      if (!isGuest) { try { await habitsApi.remove(id); } catch {} }
+    } else if (type === 'goal') {
+      setGoals(goals.filter(g => g.id !== id));
+      if (selectedGoalId === id) setSelectedGoalId(null);
+      if (!isGuest) { try { await goalsApi.remove(id); } catch {} }
+    }
+    setDeleteModal(null);
   };
 
   const todaySessions = sessions.filter(s => {
@@ -812,11 +855,24 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
         isOpen={!!resetModal}
         onClose={() => setResetModal(null)}
         onConfirm={confirmReset}
+        onAlternative={confirmRemoveCheckOnly}
         title="Reset Progress?"
-        message="This item is already completed. Resetting it will remove its 'done' status for today. Do you want to continue?"
-        confirmLabel="Riset"
-        cancelLabel="Tanpa Riset"
+        message="This item is already completed. Do you want to reset everything (including focus time) or just remove the checkmark?"
+        confirmLabel="Riset Progres"
+        alternativeLabel="Tanpa Riset"
+        cancelLabel="Batal"
         type="warning"
+      />
+
+      <ConfirmationModal 
+        isOpen={!!deleteModal}
+        onClose={() => setDeleteModal(null)}
+        onConfirm={confirmDelete}
+        title={`Hapus ${deleteModal?.type === 'task' ? 'Task' : deleteModal?.type === 'habit' ? 'Habit' : 'Goal'}?`}
+        message={`Apakah Anda yakin ingin menghapus "${deleteModal?.title || ''}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
+        type="danger"
       />
       
       <AnimatePresence>

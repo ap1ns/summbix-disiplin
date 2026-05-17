@@ -26,6 +26,7 @@ export default function TasksView({ tasks, setTasks, goals, sessions, setSession
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'completed'>('all');
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const [resetModal, setResetModal] = useState<{ isOpen: boolean, id: string } | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, id: string, title?: string } | null>(null);
 
   const todayStr = new Date().toISOString().split('T')[0];
 
@@ -59,6 +60,17 @@ export default function TasksView({ tasks, setTasks, goals, sessions, setSession
     setResetModal(null);
   };
 
+  const confirmRemoveCheckOnly = async () => {
+    if (!resetModal) return;
+    setTasks(tasks.map(t => t.id === resetModal.id ? { ...t, completed: false } : t));
+    if (!isGuest) {
+      try {
+        await tasksApi.update(resetModal.id, { completed: false });
+      } catch {}
+    }
+    setResetModal(null);
+  };
+
   const handleAddTask = async (title: string, goalId: string, priority: 'low' | 'medium' | 'high', startTime?: string, endTime?: string, date?: string) => {
     if (editingTask) {
       setTasks(tasks.map(t => t.id === editingTask.id ? { ...t, title, goalId, priority, startTime, endTime, date } : t));
@@ -81,9 +93,17 @@ export default function TasksView({ tasks, setTasks, goals, sessions, setSession
     setIsTaskModalOpen(false);
   };
 
-  const handleDeleteTask = async (id: string) => {
+  const handleDeleteTask = (id: string) => {
+    const task = tasks.find(t => t.id === id);
+    setDeleteModal({ isOpen: true, id, title: task?.title });
+  };
+
+  const confirmDeleteTask = async () => {
+    if (!deleteModal) return;
+    const { id } = deleteModal;
     setTasks(tasks.filter(t => t.id !== id));
     if (!isGuest) { try { await tasksApi.remove(id); } catch {} }
+    setDeleteModal(null);
   };
 
   // Stats
@@ -308,11 +328,24 @@ export default function TasksView({ tasks, setTasks, goals, sessions, setSession
         isOpen={!!resetModal}
         onClose={() => setResetModal(null)}
         onConfirm={confirmReset}
+        onAlternative={confirmRemoveCheckOnly}
         title="Reset Progress?"
-        message="This task is already completed. Resetting it will remove its 'done' status. Do you want to continue?"
-        confirmLabel="Riset"
-        cancelLabel="Tanpa Riset"
+        message="This task is already completed. Do you want to reset everything (including focus time) or just remove the checkmark?"
+        confirmLabel="Riset Progres"
+        alternativeLabel="Tanpa Riset"
+        cancelLabel="Batal"
         type="warning"
+      />
+
+      <ConfirmationModal 
+        isOpen={!!deleteModal}
+        onClose={() => setDeleteModal(null)}
+        onConfirm={confirmDeleteTask}
+        title="Hapus Task?"
+        message={`Apakah Anda yakin ingin menghapus "${deleteModal?.title || ''}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
+        type="danger"
       />
     </div>
   );

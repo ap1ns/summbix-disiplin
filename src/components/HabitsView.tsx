@@ -25,6 +25,7 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGoalFilter, setSelectedGoalFilter] = useState<string | 'all'>('all');
   const [resetModal, setResetModal] = useState<{ isOpen: boolean, id: string } | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, id: string, label?: string } | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update current time every 30 seconds for time-window checks
@@ -124,6 +125,23 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
     setResetModal(null);
   };
 
+  const confirmRemoveCheckOnly = async () => {
+    if (!resetModal) return;
+    setHabits(habits.map(h => {
+      if (h.id === resetModal.id) {
+        const dates = h.completedDates || [];
+        return { ...h, completedDates: dates.filter(d => d !== todayStr) };
+      }
+      return h;
+    }));
+    if (!isGuest) {
+      try {
+        await habitsApi.toggle(resetModal.id, todayStr);
+      } catch {}
+    }
+    setResetModal(null);
+  };
+
   const handleAddHabit = async (label: string, goalId: string, startTime?: string, endTime?: string) => {
     if (editingHabit) {
       setHabits(habits.map(h => h.id === editingHabit.id ? { ...h, label, goalId, startTime, endTime } as any : h));
@@ -146,9 +164,17 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
     setIsHabitModalOpen(false);
   };
 
-  const handleDeleteHabit = async (id: string) => {
+  const handleDeleteHabit = (id: string) => {
+    const habit = habits.find(h => h.id === id);
+    setDeleteModal({ isOpen: true, id, label: habit?.label });
+  };
+
+  const confirmDeleteHabit = async () => {
+    if (!deleteModal) return;
+    const { id } = deleteModal;
     setHabits(habits.filter(h => h.id !== id));
     if (!isGuest) { try { await habitsApi.remove(id); } catch {} }
+    setDeleteModal(null);
   };
 
   // Calculate stats
@@ -381,11 +407,24 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
         isOpen={!!resetModal}
         onClose={() => setResetModal(null)}
         onConfirm={confirmReset}
+        onAlternative={confirmRemoveCheckOnly}
         title="Reset Ritual?"
-        message="This ritual is already completed for today. Resetting it will remove its 'done' status. Do you want to continue?"
-        confirmLabel="Riset"
-        cancelLabel="Tanpa Riset"
+        message="This ritual is already completed for today. Do you want to reset everything (including focus time) or just remove the checkmark?"
+        confirmLabel="Riset Progres"
+        alternativeLabel="Tanpa Riset"
+        cancelLabel="Batal"
         type="warning"
+      />
+
+      <ConfirmationModal 
+        isOpen={!!deleteModal}
+        onClose={() => setDeleteModal(null)}
+        onConfirm={confirmDeleteHabit}
+        title="Hapus Ritual?"
+        message={`Apakah Anda yakin ingin menghapus "${deleteModal?.label || ''}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
+        type="danger"
       />
     </div>
   );

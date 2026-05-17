@@ -6,10 +6,12 @@ interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  onAlternative?: () => void;
   title: string;
   message: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  alternativeLabel?: string;
   type?: 'danger' | 'warning' | 'primary';
 }
 
@@ -19,10 +21,12 @@ export default function ConfirmationModal({
   isOpen, 
   onClose, 
   onConfirm, 
+  onAlternative,
   title, 
   message, 
   confirmLabel = 'Confirm', 
   cancelLabel = 'Cancel',
+  alternativeLabel,
   type = 'primary'
 }: ConfirmationModalProps) {
   const colors = {
@@ -68,19 +72,46 @@ export default function ConfirmationModal({
                 {message}
               </p>
 
-              <div className="flex gap-3">
-                <button 
-                  onClick={onClose}
-                  className="flex-1 py-4 bg-brand-bg text-brand-text-light font-black rounded-2xl hover:bg-white border border-brand-primary/5 transition-all uppercase tracking-widest text-xs"
-                >
-                  {cancelLabel}
-                </button>
-                <button 
-                  onClick={() => { onConfirm(); onClose(); }}
-                  className={cn("flex-1 py-4 font-black rounded-2xl hover:opacity-90 transition-all shadow-lg uppercase tracking-widest text-xs", colors[type])}
-                >
-                  {confirmLabel}
-                </button>
+              <div className="flex flex-col gap-3">
+                {onAlternative && alternativeLabel ? (
+                  <>
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => { onConfirm(); onClose(); }}
+                        className={cn("flex-1 py-4 font-black rounded-2xl hover:opacity-90 transition-all shadow-lg uppercase tracking-widest text-xs", colors[type])}
+                      >
+                        {confirmLabel}
+                      </button>
+                      <button 
+                        onClick={() => { onAlternative(); onClose(); }}
+                        className="flex-1 py-4 bg-brand-primary/10 text-brand-primary font-black rounded-2xl hover:bg-brand-primary/20 border border-brand-primary/10 transition-all uppercase tracking-widest text-xs"
+                      >
+                        {alternativeLabel}
+                      </button>
+                    </div>
+                    <button 
+                      onClick={onClose}
+                      className="w-full py-4 bg-brand-bg text-brand-text-light font-black rounded-2xl hover:bg-white border border-brand-primary/5 transition-all uppercase tracking-widest text-xs"
+                    >
+                      {cancelLabel}
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={onClose}
+                      className="flex-1 py-4 bg-brand-bg text-brand-text-light font-black rounded-2xl hover:bg-white border border-brand-primary/5 transition-all uppercase tracking-widest text-xs"
+                    >
+                      {cancelLabel}
+                    </button>
+                    <button 
+                      onClick={() => { onConfirm(); onClose(); }}
+                      className={cn("flex-1 py-4 font-black rounded-2xl hover:opacity-90 transition-all shadow-lg uppercase tracking-widest text-xs", colors[type])}
+                    >
+                      {confirmLabel}
+                    </button>
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>

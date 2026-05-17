@@ -5,6 +5,7 @@ import { Target, Clock, Zap, CheckCircle2, ChevronRight, Plus, Pencil, Trash2, C
 import { cn } from '../lib/utils';
 import { goalsApi } from '../lib/api';
 import { GoalModal } from './Overview';
+import ConfirmationModal from './ConfirmationModal';
 
 interface GoalsViewProps {
   goals: Goal[];
@@ -30,10 +31,20 @@ export default function GoalsView({ goals, setGoals, tasks, habits, sessions }: 
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const handleDeleteGoal = async (id: string) => {
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, id: string, title?: string } | null>(null);
+
+  const handleDeleteGoal = (id: string) => {
+    const goal = goals.find(g => g.id === id);
+    setDeleteModal({ isOpen: true, id, title: goal?.title });
+  };
+
+  const confirmDeleteGoal = async () => {
+    if (!deleteModal) return;
+    const { id } = deleteModal;
     setGoals(goals.filter(g => g.id !== id));
     if (selectedGoalId === id) setSelectedGoalId(goals.length > 1 ? goals.find(g => g.id !== id)?.id || null : null);
     try { await goalsApi.remove(id); } catch {}
+    setDeleteModal(null);
   };
 
   const handleEditGoal = async (title: string, description: string, deadline: string, color: string) => {
@@ -186,6 +197,17 @@ export default function GoalsView({ goals, setGoals, tasks, habits, sessions }: 
         onClose={() => setIsEditModalOpen(false)}
         onAdd={handleEditGoal}
         initialGoal={selectedGoal}
+      />
+
+      <ConfirmationModal 
+        isOpen={!!deleteModal}
+        onClose={() => setDeleteModal(null)}
+        onConfirm={confirmDeleteGoal}
+        title="Hapus Goal?"
+        message={`Apakah Anda yakin ingin menghapus "${deleteModal?.title || ''}"? Tindakan ini akan menghapus goal secara permanen beserta semua keterkaitannya.`}
+        confirmLabel="Hapus"
+        cancelLabel="Batal"
+        type="danger"
       />
     </div>
   );
