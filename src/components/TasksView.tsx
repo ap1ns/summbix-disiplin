@@ -310,7 +310,8 @@ export default function TasksView({ tasks, setTasks, goals, sessions, setSession
         onConfirm={confirmReset}
         title="Reset Progress?"
         message="This task is already completed. Resetting it will remove its 'done' status. Do you want to continue?"
-        confirmLabel="Yes, Reset"
+        confirmLabel="Riset"
+        cancelLabel="Tanpa Riset"
         type="warning"
       />
     </div>

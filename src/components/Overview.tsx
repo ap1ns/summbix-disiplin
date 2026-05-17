@@ -814,7 +814,8 @@ export default function Overview({ goals, setGoals, tasks, setTasks, habits, set
         onConfirm={confirmReset}
         title="Reset Progress?"
         message="This item is already completed. Resetting it will remove its 'done' status for today. Do you want to continue?"
-        confirmLabel="Yes, Reset"
+        confirmLabel="Riset"
+        cancelLabel="Tanpa Riset"
         type="warning"
       />
       

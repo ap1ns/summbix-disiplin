@@ -383,7 +383,8 @@ export default function HabitsView({ habits, setHabits, goals, sessions, setSess
         onConfirm={confirmReset}
         title="Reset Ritual?"
         message="This ritual is already completed for today. Resetting it will remove its 'done' status. Do you want to continue?"
-        confirmLabel="Yes, Reset"
+        confirmLabel="Riset"
+        cancelLabel="Tanpa Riset"
         type="warning"
       />
     </div>
